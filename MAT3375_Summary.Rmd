@@ -1,0 +1,1000 @@
+---
+title: "MAT 3375 Summary"
+author: "Joe Zhang"
+date: "Fall 2023"
+output: 
+  pdf_document:
+    number_sections: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Introduction
+
+We want to model $Y$ in terms of $X$. We let $X_1, \dots, X_p$ be the explanatory variables and $Y$ be the response variable. We want to see how $Y$ changes with $X_1, \dots, X_p$. The relationship between the explanatory variables and the response variable can also be used for prediction the new value of $Y$ given new value of the explanatory variables. The primary goal in regression is to develop a model that relates the response to the explanatory variables, to test it, and ultimately to use it for inference and prediction.
+
+
+# Simple Linear Regression
+
+## The Model
+We collect a set of paired data. We plot the $n$ paired data $Y_i$ vs. $X_i$. If it seems reasonable to fit a straight line to the points, we then postulate the following simple regression model
+
+\begin{equation}
+  Y_i = \beta_0 + \beta_1X_i + \epsilon_i
+\end{equation}
+
+In the model, $\epsilon$ represents an unobserved random error term, $\beta_0$ is the intercept, and $\beta_1$ is the slope of the line.  
+
+Both $\beta_0$ and $\beta_1$ are labeled parameters. They need to be estimated usually from the observed data.  
+
+Alternatively, the model may be expressed in terms of $(X_i - \overline{X})$
+
+\begin{equation}
+  Y_i = (\beta_0 + \beta_1\overline{X}) + \beta_1(X_i - \overline{X}) + \epsilon_i
+\end{equation}
+
+where $\overline{X}$ represents the average of the $X_i$.
+
+The proposed model is linear in the parameters $\beta_0$ and $\beta_1$.  
+
+The model would still be referred to as linear if instead we had $X_i^2$ instead of $X_i$.   
+(i.e. The model $Y_i = \beta_0 + \beta_1X_i + \beta_2X_i^2 + \epsilon_i$ is still linear in the parameters).
+
+## Model Assumptions
+
+We assume the following: The random error terms are uncorrelated, have mean equal to 0, and common variance equal to $\sigma^2$. This assumption leads to the following:
+
+\begin{itemize}
+  \item $E[Y_i] = \beta_0 + \beta_1X_i$
+  \item $Var[Y_i] = \sigma^2$
+\end{itemize}  
+
+Caution: A well fitting regression model does not imply causation.
+
+## Least Squares Estimates
+
+We define $Q$ as the sum of square errors
+
+\begin{equation*}
+\begin{split}
+  Q 
+  &= \sum_{i = 1}^{n} \epsilon_i^2\\
+  &= \sum_{i = 1}^{n} [Y_i - \beta_0 - \beta_1X_i]^2
+\end{split}
+\end{equation*}
+
+Then we need to find $\beta_0$ and $\beta_1$ such that they minimize $Q$. We do this by differentiating with respect to $\beta_0$ and $\beta_1$ and then setting the partial derivatives equal to 0. We get that the partial derivatives are:
+
+\begin{equation*}
+  \frac{\partial Q}{\partial \beta_0} = -2 \sum_{i = 1}^{n} [Y_i - \beta_0 - \beta_1X_i] = 0
+\end{equation*}
+
+\begin{equation*}
+  \frac{\partial Q}{\partial \beta_1} = -2\sum_{i = 1}^{n}[Y_i - \beta_0 - \beta_1X_i]X_i = 0
+\end{equation*}
+
+By rearranging, we get the following equations:
+
+\begin{equation*}
+  \sum_{i = 1}^{n} [Y_i] = n\beta_0 + \beta_1 \sum_{i = 1}^{n}X_i
+\end{equation*} 
+
+\begin{equation*}
+  \sum_{i = 1}^{n} [X_iY_i] = \beta_0 \sum_{i = 1}^{n} X_i + \beta_1\sum_{i = 1}^{n} X_i^2
+\end{equation*}
+
+Solving the system of linear equations, we let $b_0$ and $b_1$ represent the solutions to $\beta_0$ and $\beta_1$, respectively. We get
+
+\begin{equation}
+  b_0 = \overline{Y} - b_1\overline{X}
+\end{equation}
+
+\begin{equation}
+  b_1 = \frac{\sum (X_i - \overline{X})Y_i}{\sum(X_i - \overline{X})^2}
+\end{equation}
+
+We can also express the equation of $b_1$ as
+
+\begin{equation*}
+  b_1 = \sum_{i = 1}^{n} k_iY_i
+\end{equation*}
+
+where $k_i = \frac{(X_i - \overline{X})}{\sum(X_i - \overline{X})^2}$
+
+We have the following properties of the $k_i$:
+
+\begin{itemize}
+  \item $$\sum k_i = 0$$
+  \item $$\sum k_iX_i = 1$$
+  \item $$\sum k_i^2 = \frac{1}{\sum(X_i - \overline{X})^2}$$
+\end{itemize}
+
+To show the properties, we have that
+
+\begin{equation*}
+\begin{split}
+  \sum k_i
+  &= \frac{\sum (X_i - \overline{X})}{\sum (X_i - \overline{X})^2} \\
+  &= \frac{(\sum X_i) - n\overline{X}}{\sum(X_i - \overline{X})^2} \\
+  &= 0
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+\begin{split}
+  \sum k_iX_i
+  &= \frac{\sum(X_i - \overline{X})X_i}{\sum(X_i - \overline{X})^2}\\
+  &= \frac{\sum X_i^2 - \overline{X}\sum X_i}{\sum(X_i - \overline{X})^2} \\
+  &= \frac{\sum X_i^2 - n\overline{X}}{\sum(X_i - \overline{X})^2} \\
+  &= 1
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+\begin{split}
+  \sum k_i^2
+  &= \frac{\sum(X_i - \overline{X})^2}{(\sum(X_i - \overline{X})^2)^2} \\
+  &= \frac{1}{\sum (X_i - \overline{X})^2}
+\end{split}
+\end{equation*}
+
+After finding the least squares estimate for $\beta_0$ and $\beta_1$, which we denote as $b_0$ and $b_1$, respectively, the line that fits the data is:
+
+\begin{equation}
+  \hat{Y} = b_0 + b_1X
+\end{equation}
+
+Alternatively, we can also have
+
+\begin{equation*}
+  \begin{split}
+    \hat{Y}
+    &= (b_0 + b_1\overline{X}) + b_1(X - \overline{X}) \\
+    &= \overline{Y} - b_1\overline{X} + b_1\overline{X} + b_1(X - \overline{X}) \\
+    &= \overline{Y} + b_1(X - \overline{X})
+  \end{split}
+\end{equation*}
+
+It is also important to note that the point $(\overline{X}, \overline{Y})$ is on the line.
+
+We can predict $Y$ using $X$ and the line.
+
+## The Gauss-Markov Theorem
+
+The Gauss-Markov Theorem states that the least squares estimators $b_0$ and $b_1$ are unbiased and have minimum variance among all unbiased linear estimators.
+
+Recall: An estimator is unbiased if its expected value is the value of its parameter.
+
+To show that $b_1$ is an unbiased estimator of $\beta_1$, we need to show that $E[b_1] = \beta_1$
+
+\begin{equation*}
+  \begin{split}
+    E[b_1] 
+    &= \sum k_iE[Y_i] \\
+    &= \beta_0\sum k_i + \beta_1\sum k_iX_i \\
+    &= \beta_0 \cdot 0 + \beta_1 \cdot 1 \\
+    &= \beta_1
+  \end{split}
+\end{equation*}
+
+To show that $b_0$ is an unbiased estimator of $\beta_0$, we need to show that $E[b_0] = \beta_0$
+
+\begin{equation*}
+  \begin{split}
+    E[b_0]
+    &= E[\overline{Y} - b_1\overline{X}] \\
+    &= E[\overline{Y}] - E[b_1\overline{X}] \\
+    &= \frac{1}{n}\sum E[Y_i] - \beta_1 \overline{X} \\
+    &= \frac{1}{n} \sum (\beta_0 + \beta_1 X_i) - \beta_1 \overline{X} \\
+    &= \beta_0 + \beta_1 \overline{X} - \beta_1 \overline{X} \\
+    &= \beta_0
+  \end{split}
+\end{equation*}
+
+Now, we want to show that $b_0$ and $b_1$ have minimum variance among all unbiased linear estimators.
+
+Consider an unbiased estimator for $\beta_1$, say, $\hat{\beta_1} = \sum c_iY_i$, it must satisfy
+
+\begin{equation*}
+\begin{split}
+  \beta_1 
+  &= E[\hat{\beta_1}] \\
+  &= \sum c_iE[Y_i] \\
+  &= \sum c_i[\beta_0 + \beta_1X_i]
+\end{split}
+\end{equation*}
+
+From this, we must have that $\sum c_i = 0$, $\sum c_iX_i = 1$, and $Var[\hat{\beta_1}] = \sigma^2\sum c_i^2$.
+
+We set $c_i = k_i + d_i$ for arbitrary $d_i$. Then we get
+
+\begin{equation*}
+  \begin{split}
+    \sum k_id_i
+    &= \sum k_i(c_i - k_i) \\
+    &= [\sum c_i \frac{(X_i - \overline{X})}{\sum(X_i - \overline{X})^2}] - \frac{1}{\sum(X_i - \overline{X})^2} \\
+    &= [\frac{1}{\sum(X_i - \overline{X})^2} - 0] - \frac{1}{\sum(X_i - \overline{X})^2} \\
+    &= 0
+  \end{split}
+\end{equation*}
+
+If we define the vectors $\mathbf{c}^T = [c_1, c_2, ..., c_n]$, $\mathbf{k}^T = [k_1, k_2, ..., k_n]$, and $\mathbf{d}^T = [d_1, d_2, ..., d_n]$, we get that $\mathbf{k}^T \mathbf{d} = 0$. This shows that $\mathbf{k}$ and $\mathbf{d}$ have inner product 0 and are orthogonal vectors.
+
+Since we have $c_i = k_i + d_i$, we get that $\mathbf{c} = \mathbf{k} + \mathbf{d}$. Since $\mathbf{k}$ and $\mathbf{d}$ are orthogonal, we have that by the Pythagorean theorem, $||\mathbf{c}||^2 = ||\mathbf{k}||^2  + ||\mathbf{d}||^2$. Then, we get that
+
+\begin{equation*}
+Var[\hat{\beta_1}] = \sigma^2 (\sum k_i^2 + \sum d_i^2)
+\end{equation*}
+
+The variance is minimized when $d_i$ are all 0. Then $\hat{\beta_1} = b_1$ since $c_i = k_i$.
+
+## Summary of estimates
+
+We may write $\hat{Y} = b_0 + b_1X$ for the estimated or fitted line, $e_i = Y_i - \hat{Y}_i$ for the estimated ith residual, and we estimate the variance $\sigma^2$ by
+
+\begin{equation*}
+  \hat{\sigma^2} = \frac{\sum e_i^2}{n-2}
+\end{equation*}
+
+This is also known as the mean square error or MSE. 
+
+We have 
+
+\begin{equation*}
+  b_1 = \sum k_iY_i
+\end{equation*}
+
+\begin{equation*}
+\begin{split}
+  b_0 
+  &= \overline{Y} - b_1\overline{X} \\
+  &= \frac{\sum Y_i}{n} - \overline{X}\sum k_iY_i \\
+  &= \sum (\frac{1}{n} - k_i\overline{X})Y_i
+\end{split}
+\end{equation*}
+
+We also have the following propeties of the residuals:
+
+\begin{itemize}
+  \item $\sum e_i = 0$
+  \item $\sum X_ie_i = 0$
+\end{itemize}
+
+To prove the properties, we have:
+
+\begin{equation*}
+\begin{split}
+  \sum e_i
+  &= \sum Y_i - \sum[\overline{Y} + b_1(X_i - \overline{X})]\\
+  &= \sum (Y_i - \overline{Y}) \\
+  &= 0
+\end{split}
+\end{equation*}
+
+\begin{equation*}
+\begin{split}
+  \sum X_ie_i
+  &= \sum X_iY_i - \overline{Y}\sum X_i - b_1 \sum X_i(X_i - \overline{X}) \\
+  &= [\sum X_iY_i - n\overline{Y}\overline{X}] - \frac{\sum X_iY_i - n\overline{Y}\overline{X}}{\sum(X_i - \overline{X})^2} \sum X_i(X_i - \overline{X})\\
+  &= 0
+\end{split}
+\end{equation*}
+
+## The Geometry of Estimation
+
+We let $\boldsymbol{X} = (X_1, ..., X_n)^T$, $\boldsymbol{Y} = (Y_1, ..., Y_n)^T$, $\boldsymbol{\hat{Y}} = (\hat{Y_1}, \hat{Y_2}, ..., \hat{Y_n})^T$
+
+We let $\boldsymbol{e} = (e_1, e_2, ..., e_n)^T$ and $\boldsymbol{1_n} = (1, 1, ..., 1)$. Then we can find that $(\boldsymbol{X} - \overline{X}\boldsymbol{1_n})\boldsymbol{e} = 0$. From this, we know that the vector $\boldsymbol{e}$ is orthogonal to the vectors $\boldsymbol{1_n}$ and $\boldsymbol{X} - \overline{X}\boldsymbol{1_n}$. Since $\boldsymbol{\hat{Y}} = \overline{Y}\boldsymbol{1_n} + b_1(\boldsymbol{X} - \overline{X}\boldsymbol{1_n})$. From this, we get that $\boldsymbol{e}$ is orthogonal to $\boldsymbol{\hat{Y}}$.
+
+Using this, we get the following result:
+
+\begin{equation*}
+  ||\boldsymbol{Y}||^2 = ||\boldsymbol{\hat{Y}}||^2 + ||\boldsymbol{e}||^2
+\end{equation*}
+
+Since we have that $\boldsymbol{\hat{Y}} = \overline{Y} \boldsymbol{1_n} + b_1(\boldsymbol{X} - \overline{X} \boldsymbol{1_n})$, we get that
+
+\begin{equation*}
+\begin{split}
+  ||\boldsymbol{\hat{Y}}||^2 
+  &= ||\overline{Y} \boldsymbol{1_n}||^2 + ||b_1 (\boldsymbol(X) - \overline{X} \boldsymbol{1_n})||^2\\
+  &= \overline{Y}^2 \boldsymbol{1_n}^T \boldsymbol{1_n} + b_1^2 \sum (X_i - \overline{X})^2
+\end{split}
+\end{equation*}
+
+Then we get that
+
+\begin{equation*}
+  \sum Y_i^2 = n \overline{Y}^2 + b_1^2 \sum (X_i - \overline{X})^2 + \sum (Y_i - \hat{Y_i})^2
+\end{equation*}
+
+From that, we get
+
+\begin{equation}
+\sum (Y_i - \overline{Y})^2 = b_1^2 \sum (X_i - \overline{X})^2 + \sum (Y_i - \hat{Y_i})^2
+\end{equation}
+
+We call $\sum (Y_i - \overline{Y})^2$ the total sum of squares, $b_1^2 \sum (X_i - \overline{X})^2$ the regression sum of squares, and $\sum (Y_i - \hat{Y_i})^2$ the error sum of squares. This can be used for inferences in regression, which we will talk about in the next section.
+
+## Inference in regression
+
+Remark: If we assume that the random errors ${\epsilon_i} \sim N(0, \sigma^2)$, then we get that the likelihood function is 
+
+\begin{equation*}
+  L(\beta_0, \beta_1, \sigma^2) = (\frac{1}{\sqrt{2\pi}\sigma})^n e^{\frac{1}{2\sigma^2} \sum \epsilon_i^2}
+\end{equation*}
+
+Maximizing this function is equivalent to minimizing $Q = \sum epsilon_i^2$, we get the same results for $\beta_0$ and $\beta_1$.
+
+We can also obtain an estimate for $\sigma^2$. It can be estimated by $MSE = \frac{\sum e_i^2}{n-2}$.
+
+Suppose we have the model $Y_i = \beta_0 + \beta_1X_i + \epsilon_i$, where $\epsilon_i \sim N(0, \sigma^2)$ for $i = 1, ..., n$. Then we have
+
+\begin{itemize}
+  \item $\frac{b_1 - \beta_1}{s(b_1)} \sim t_{n-2}$ where $s^2(b_1) = \frac{MSE}{\sum(X_i - \overline{X})^2}$
+  \item $\frac{b_0 - \beta_0}{s(b_0)} \sim t_{n-2}$ where $s^2(b_0) = MSE(\frac{1}{n} + \frac{\overline{X}^2}{\sum(X_i - \overline{X})^2})$
+  \item MSE is an unbiased estimate of $\sigma^2$ and $\frac{(n-2)MSE}{\sigma^2} \sim \chi^2_{n-2}$
+\end{itemize}
+
+We can use the properties above to construct confidence intervals for the parameters and test hypotheses. We get that
+
+\begin{itemize}
+  \item $100(1-\alpha)\% \text{ CI for }\beta_1: b_1 \pm t_{n-2}(\frac{\alpha}{2}) s(b_1)$
+  \item $100(1-\alpha)\% \text{ CI for }\beta_0: b_0 \pm t_{n-2}(\frac{\alpha}{2}) s(b_0)$
+\end{itemize}
+
+We can also test hypotheses such as $H_0: \beta_1 = 0$ vs. $H_1: \beta_1 \neq 0$ using the test statistic $T = \frac{b_1}{s(b_1)} \sim t_{n-2}$.
+
+## Example for regression
+
+We consider the following example on grade point averages at the end of the freshman year (Y) as a function of the ACT test scores (X). 
+
+\begin{itemize}
+  \item We plot the data
+  \item We obtain the least squares estimates
+  \item We plot the estimated regression function and estimate Y when $X = 30$
+\end{itemize}
+
+The R code below will complete the actions
+
+```{r}
+data = read.table("/Users/joezhang/Downloads/Grade point average.txt", header = TRUE, sep = '\t')
+names(data)
+GPA = data$GPA
+ACT = data$ACT
+fit = lm(GPA~ACT, data = data)
+fit
+```
+The number under (Intercept) is the least squares estimate for $\beta_0$ and the number under ACT is the least squares estimate for $\beta_1$.
+
+The code below constructs a 95% confidence interval for both $\beta_0$ and $\beta_1$.
+
+```{r}
+confint(fit, level = 0.95)
+```
+
+The code below plots the data and also constructs a 95% confidence interval and 95% prediction interval for the average of Y.
+
+```{r}
+library(ggplot2)
+ggplot(data, aes(x = ACT, y = GPA)) +
+  geom_point()+
+  geom_smooth(method = lm, se = TRUE)
+temp_var = predict(fit, interval = 'prediction')
+new_df = cbind(data, temp_var)
+ggplot(new_df, aes(ACT, GPA))+
+  geom_point()+
+  geom_line(aes(y = lwr), color = 'red', linetype = 'dashed')+
+  geom_line(aes(y = upr), color = 'red', linetype = 'dashed')+
+  geom_smooth(method = lm, se = TRUE)
+```
+
+## Analysis of Variance (ANOVA)
+
+Below is the typical format of an analysis of variance (ANOVA) table (for this part, we use $p = 2$):
+
+\begin{table}[!h]
+\centering
+\caption{ANOVA Table}
+\begin{tabular}{|c|c|c|c|c|c|}
+
+\hline
+Source & Sum of Squares (SS) & df & Mean Square (MS = SS/df) & F statistic & E[MS] \\
+\hline
+Regression & $SSR = b_1^2\sum(X_i - \overline{X})^2$ & $p - 1$ & $MSR = \frac{SSR}{p-1}$ & $\frac{MSR}{MSE}$ & $\sigma^2 + \beta_1^2 \sum(X_i - \overline{X})^2$ \\
+\hline
+Error & $SSE = \sum (Y_i - \hat{Y_i})^2$ & $n - p$ & $MSE = \frac{SSE}{n-p}$ & & $\sigma^2$\\
+\hline
+& & & & & \\
+\hline
+Total & $SSTO = \sum(Y_i - \overline{Y})^2$ & $n - 1$ & & &\\
+\hline
+  
+\end{tabular}
+\label{lyxtab2}
+\end{table}
+
+
+Each of the sums of squares is a quadratic form where the rank of the corresponding matrix is the degrees of freedom indicated. Cochran's theorem applies and we conclude that the quadratic forms are independent and have Chi-Square distributions. It is well known that the ratio of the two independent Chi-Square divided by their degrees of freedom has a F-distribution (To be seen in section 3 of the notes).
+
+We get that 
+
+\begin{itemize}
+  \item $\frac{SSR}{\sigma^2} \sim \chi^2(p-1)$
+  \item $\frac{SSE}{\sigma^2} \sim \chi^2(n-p)$
+\end{itemize} 
+
+Then, we get that the F statistic is
+
+\begin{equation*}
+  F = \frac{SSR/(\sigma^2 (p-1))}{SSE/(\sigma^2 (n-p))} = \frac{SSR/(p-1)}{SSE/(n-p)} = \frac{MSR}{MSE} \sim F(p-1, n-p)
+\end{equation*}
+
+The degrees of freedom are determined by how much data is required to calculate a particular expression.
+
+$\sum (Y_i - \overline{Y})^2$ has $n-1$ degrees of freedom because of the constraints that $\sum (Y_i - \overline{Y}) = 0$
+
+$b_1^2 \sum (X_i - \overline{X})^2$ has one degree of freedom because it is a function of $b_1$
+
+$\sum (Y_i - \hat{Y_i})^2$ has $n-2$ degrees of freedom because it is a function of two parameters.
+
+We'll prove all these using matrices in section 3.
+
+## Testing with ANOVA table
+
+We can use the ANOVA table to test the hypotheses $H_0: \beta_1 = 0$ versus $H_1: \beta_1 \neq 0$. The null hypothesis states that the slope of the line is equal to 0. Under the null hypothesis, the expected mean square for regression and the expected mean square error are separate independent estimates of the variance $\sigma^2$. Hence, if the null hypothesis is true, the F-ratio should be small. On the other hand, if the alternative hypothesis $H_1$ is true, then the numerator of the F ration will be expected to be large. Consequently, large values of the F statistic are consistent with the alternative. We reject the null hypothesis for large values of F.
+
+In other words, under the null hypothesis, we have that $E[MSR] = \sigma^2$ and $E[MSE] = \sigma^2$. Then the F ratio $F = \frac{MSR}{MSE}$ would be close to 1. Under the alternative hypothesis, $E[MSE] = \sigma^2$. However, $E[MSR] = \sigma^2 + \beta_1^2\sum(X_i - \overline{X})^2$ since $\beta_1 \neq 0$. Therefore, the F ratio is expected to be large. This is why we reject $H_0$ for large values of the F ratio. 
+
+## Back to GPA data
+
+If we consider the GPA data, we can construct an ANOVA table. We do this using R.
+
+```{r}
+anova(fit)
+```
+This shows that the F value is large and the p-value is small. We can reject $H_0$ in this case. This means that there is convincing evidence that the slope is not 0 and there is a relationship between the ACT score and GPA.
+
+Now, we want to construct a 95\% confidence interval for $\beta_0$ and $\beta_1$ for the GPA data using the data summary.
+
+```{r}
+summary(fit)
+```
+
+We get that a confidence interval for $\beta_0$ can be calculated the following way: 
+
+CI for $\beta_0$: $b_0 \pm t_{\alpha/2}{117} \cdot s(b_0) = 2.14596 \pm 1.98(0.32318) = (1.5059, 2.7860)$
+
+We get that a confidence interval for $\beta_1$ can be calculated the following way:
+
+CI for $\beta_1$: $b_1 \pm t_{\alpha/2}{117} \cdot s(b_1) = 0.03735 \pm 1.98(0.01289) = (0.01181, 0.06288)$
+
+We can do hypothesis testing using t statistics on both $\beta_0$ and $\beta_1$. 
+
+If we test $H_0: \beta_0 = 0$ versus $H_1: \beta_0 \neq 0$, we can use the R output and we find that $t = 6.640$, which is significant. We can then reject $H_0$. Similar with $\beta_1$.
+
+However, if we want to test $H_0: \beta_0 = \beta_{0_1}$ versus $H_1: \beta_0 \neq \beta_{0_1}$ for some $\beta_{0_1} \neq 0$, then we can't use R. We have to use the test statistic $t = \frac{b_0 - \beta_{0_1}}{s(b_0)} \sim t_{n-2}$ to test and this cannot be computed using R. Similar for $\beta_1$.
+
+## Confidence Interval for mean of Y for a given X
+
+We want to construct a confidence interval for the mean of $Y^*$ at a given $X^*$, or $E[Y^*]$.
+
+To estimate $E[Y^*]$, we know that $E[Y^*] = \beta_0 + \beta_1X^*$. We can estimate $E[Y^*]$ by
+$$\hat{Y}^* = b_0 + b_1X^* = \sum(\frac{1}{n} + k_i(X^* - \overline{X}))Y_i$$ for a given value of $X^*$. The estimator is unbiased and has a normal distribution.
+
+We also get that 
+
+\begin{equation*}
+\begin{split}
+  Var[\hat{Y}^*]
+  &= \sigma^2 \sum(\frac{1}{n} + k_i(X^* - \overline{X}))^2\\
+  &= \sigma^2 \sum((\frac{1}{n})^2 + k_i^2(X^* - \overline{X}) + 2(\frac{1}{n})k_i(X^* - \overline{X}))\\
+  &= \sigma^2(\frac{1}{n} + \frac{(X^* - \overline{X})^2}{\sum (X_i - \overline{X})^2})
+\end{split}
+\end{equation*}
+
+The variance of $\hat{Y}^*$ can be estimated by $s^2[\hat{Y}^*] = MSE(\frac{1}{n} + \frac{(X^* - \overline{X})^2}{\sum (X_i - \overline{X})^2})$
+
+We can then use the fact that $\frac{\hat{Y}^* - E[Y^*]}{s[\hat{Y^*}]} \sim t_{n-2}$ to make inference on $E[Y]$. We can then construct a $100(1-\alpha)\%$ confidence interval for $E[Y^*]$ by $\hat{Y}^* \pm t_{\alpha/2, t-2}s[\hat{Y}^*]$.
+
+The width of the confidence interval is different at different values of $X^*$. In fact, the interval is the narrowest at $X^* = \overline{X}$ and gets wider as it deviates from $\overline{X}$.
+
+## Prediction Interval for Y for a given X
+
+For prediction, we want to find a confidence interval for a new value of $Y^*$ for a given $X^*$.
+
+Note: Alvo's explanations don't make sense. I used the textbook, internet resources, and Boily's notes to make this section. Please let me know if there's anything I need to correct.
+
+We consider the random variable $Y^* - \hat{Y}^*$ for a given $X^*$. We can use this to make inferences on the predicted value of $Y^*$.
+
+We have that $E[Y^* - \hat{Y}^*] = 0$. To show this, we have that
+
+\begin{equation*}
+\begin{split}
+  E[Y^* - \hat{Y}^*]
+  &= E[Y^*] - E[\hat{Y}^*] \\
+  &= \beta_0 + \beta_1X^* - E[b_0 + b_1X^*] \\
+  &= \beta_0 + \beta_1X^* - E[b_0] - E[b_1]X^* \\
+  &= \beta_0 + \beta_1X^* - \beta_0 - \beta_1X^* \\
+  &= 0
+\end{split}
+\end{equation*}
+
+We also have that $Var[Y^* - \hat{Y}^*] = \sigma^2(1+\frac{1}{n} + \frac{X^* - \overline{X}}{\sum(X_i - \overline{X})^2})$. To show this, we have
+
+\begin{equation*}
+\begin{split}
+  Var[Y^* - \hat{Y}^*]
+  &= Var[Y^*] + Var[\hat{Y}^*] \\
+  &= \sigma^2 + \sigma^2(\frac{1}{n} + \frac{(X^* - \overline{X})}{\sum (X_i - \overline{X})}) \\
+  &= \sigma^2 (1 + \frac{1}{n} + \frac{(X^* - \overline{X})^2}{\sum (X_i - \overline{X})^2})
+\end{split}
+\end{equation*}
+
+Then we have that $Y^* - \hat{Y}^* \sim N(0, \sigma^2 (1 + \frac{1}{n} + \frac{(X^* - \overline{X})}{\sum (X_i - \overline{X})}))$
+
+We estimate the variance of $Y^* - \hat{Y}^*$ by 
+
+\begin{equation*}
+  s^2[Y^* - \hat{Y}^*] = MSE(1 + \frac{1}{n} + \frac{ (X^* - \overline{X})^2}{\sum (X_i - \overline{X})^2})
+\end{equation*}
+
+Then we get that 
+
+\begin{equation*}
+  \frac{(Y^* - \hat{Y}^*) - 0}{s[Y^* - \hat{Y}^*]} \sim t_{n-2}
+\end{equation*}
+
+Then we can construct a prediction interval for $Y^*$. The prediction interval is $\hat{Y}^* \pm s(Y^* - \hat{Y}^*)$
+
+## Example: Airfreight Data
+
+```{r, include=FALSE, echo=FALSE}
+library(knitr)
+```
+
+```{r}
+data = read.table("/System/Volumes/Data/MAT 3375/Summary Sheet/Airfreight Data.txt", header=TRUE, sep = '\t')
+kable(data)
+```
+
+a. Compute the ANOVA table.
+b. Compute confidence intervals for the parameters.
+c. Compute a confidence interval for the average response when X = 1.
+
+To compute an ANOVA, table, we simply use the r command
+
+```{r}
+x = data$Shipment.Route
+y = data$Airfreight.breakage
+fit = lm(y~x)
+anova(fit)
+```
+
+We conclude that the regression is highly significant since the F statistic has a value of 72.73.
+
+We now want to compute a confidence interval for the coefficients, we do this using the following R command:
+
+```{r}
+summary(fit)
+```
+
+We get that for $\beta_0$, a $100(1-\alpha)\%$ confidence interval is $10.2000 \pm t_{\alpha/2, 8} \cdot 0.6633$. For $\beta_1$, a $100(1-\alpha)\%$ confidence interval is $4.0000 \pm t_{\alpha/2, 8} \cdot 0.4690$. In addition, we get that $\hat{\sigma^2} = 2.2$ on 8 degrees of freedom. 
+
+To compute a 95\% confidence interval for the average response when $X = 1$, we can use the following R commands:
+
+```{r}
+new.dat = data.frame(x=1)
+predict(fit, newdata=new.dat, interval="confidence")
+```
+
+To compute a 95\% prediction interval for Y at $X = 1$, we can use the following R commands:
+
+```{r}
+new.dat = data.frame(x=1)
+predict(fit, newdata=new.dat, interval='prediction')
+```
+
+## Correlation Coefficient
+
+The sample correlation coefficient is defined the following way:
+
+\begin{equation}
+  r = \frac{\sum (X_i - \overline{X})(Y_i - \overline{Y})}{\sqrt{\sum(X_i - \overline{X})^2 \sum(Y_i - \overline{Y})}}
+\end{equation}
+
+The correlation coefficient is related to $b_1$. We can rewrite the equation as
+
+\begin{equation*}
+  r = b_1(\frac{\sum(X_i - \overline{X})^2}{\sum(Y_i - \overline{Y})^2})^{\frac{1}{2}}
+\end{equation*}
+
+The population correlation coefficient is denoted by $\rho$. It is
+
+\begin{equation*}
+  \rho = \frac{Cov(X, Y)}{\sqrt{Var[X]Var[Y]}}
+\end{equation*}
+
+We use r to estimate $\rho$.
+
+Under $H_0: \rho = 0$, we have that $$t = \frac{r \sqrt{n-2}}{\sqrt{1-r^2}} \sim t_{n-2}$$
+
+We can perform a test for $\rho$ using the R command:
+
+```{r, include=FALSE}
+library(MPV)
+```
+
+```{r}
+x = p2.10$sysbp
+y = p2.10$weight
+cor.test(x, y, NULL, method = "pearson")
+```
+
+If we test $H_0: \rho = \rho_0$, then we use the following fact to make inference:
+
+\begin{equation*}
+  Z = arctanh(r) = \frac{1}{2}\cdot ln(\frac{1+r}{1-r}) \sim N(arctanh(\rho), \frac{1}{n-3})
+\end{equation*}
+
+So if we want to test the hypothesis, we use the test statistic: $Z = (arctanh(r) - arctanh(\rho_0))\sqrt{n-3}$. 
+
+We reject $H_0$ for large values of the test statistic.
+
+To compute a confidence interval of $\rho$, we use the following formula: $[\tanh(arctanh(r) - z_{\alpha/2}(n-3)^{\frac{1}{2}}), tanh(arctanh(r) + z_{\alpha/2}(n-3)^{\frac{1}{2}})]$
+
+
+
+# Matrix Approach to Regression
+
+## Matrix Notations
+
+If we let $\boldsymbol{Y} = [Y_1, ..., Y_n]^T$ be the transpose of the column data vector, then we define the expectation by $\boldsymbol{E[Y]} = [E[Y_1], ..., E[Y_n]]^T$.
+
+Proposition: If $\boldsymbol{Z} = \boldsymbol{AY} + \boldsymbol{B}$ for some matrix of constants $\boldsymbol{A}$, $\boldsymbol{B}$, then we have $\boldsymbol{E[Z]} = \boldsymbol{AE[Y] + B}$. 
+
+To prove this, we let $\boldsymbol{Z} = [Z_1, ..., Z_n]^T$, $a_{ij}$ be the element of the matrix $\boldsymbol{A}$ in the i-th row and j-th column. Let $\boldsymbol{B} = [b_1, ..., b_n]$. Then we get
+
+\begin{equation*}
+  \begin{split}
+    E[Z_i]
+    &= E\{[\sum_j a_{ij}Y_j + b_i]\} \\
+    &= [\sum_j a_{ij}E[Y_j]] + b_i
+  \end{split}
+\end{equation*}
+
+We define the covariance of $\boldsymbol{Y}$, or the variance-covariance matrix of $Y$, denoted by $Cov[\boldsymbol{Y}]$, by $$Cov[\boldsymbol{Y}] = E\{[\boldsymbol{Y} - E[\boldsymbol{Y}]][\boldsymbol{Y} - E[\boldsymbol{Y}]]^T\}$$. We denote this by $\boldsymbol{\Sigma}$
+
+We have the following property of the variance-covariance matrix: $$Cov[\boldsymbol{AY}] = \boldsymbol{A\Sigma A^T}$$ where $\boldsymbol{\Sigma}$ is the variance-covariance matrix of $\boldsymbol{Y}$
+
+To prove this, we have that
+
+\begin{equation*}
+  \begin{split}
+    Cov[\boldsymbol{AY}]
+    &= E\{[\boldsymbol{AY - E[AY]}][\boldsymbol{AY - E[AY]}]^T\} \\
+    &= E\{[\boldsymbol{AY - AE[Y]}][\boldsymbol{AY - AE[Y]}]^T\} \\
+    &= E\{[\boldsymbol{A[Y-E[Y]][Y-E[Y]]^TA^T}\} \\
+    &= \boldsymbol{A}E\{\boldsymbol{[Y-E[Y]][Y-E[Y]]^T}\}\boldsymbol{A^T}\\
+    &= \boldsymbol{A\Sigma A^T}
+  \end{split}
+\end{equation*}
+
+## Multivariate Normal Distribution
+
+A random vector $\boldsymbol{Y}$ has a multivariate normal distribution if its density is given by
+
+\begin{equation*}
+  f(y_1, \dots, y_n) = \frac{|\boldsymbol{\Sigma}|^{\frac{1}{2}}}{(2\pi)^{\frac{n}{2}}} \cdot exp(-\frac{1}{2}(\boldsymbol{y - \mu})^T \boldsymbol{\Sigma}^{-1} (\boldsymbol{y-\mu}))
+\end{equation*}
+
+where $\boldsymbol{y} = [y_1, ..., y_n]^T$, $\boldsymbol{\mu} = [\mu_1, ..., \mu_n]$, and $\boldsymbol{\Sigma} = Cov[\boldsymbol{Y}]$. We denote this by $Y \sim N_n(\boldsymbol{\mu}, \boldsymbol{\Sigma})$. 
+
+If we consider the special case where $n = 1$, we have that $\boldsymbol{\Sigma} = \sigma^2$ and $|\boldsymbol{\Sigma}|^{\frac{1}{2}} = \frac{1}{\sigma}$. Then the density function is 
+
+\begin{equation*}
+  f(y_1) = \frac{1}{\sigma \sqrt{2\pi}} \cdot exp(-\frac{1}{2} \frac{(y_1 - \mu_1)^2}{\sigma^2})
+\end{equation*}
+
+we get back the univariate normal distribution.
+
+Theorem: Let $\boldsymbol{Y} \sim N_n(\boldsymbol{\mu}, \boldsymbol{\Sigma})$. Let $\boldsymbol{A}$ be an arbitrary $p \times n$ matrix of constants, then we have that $$\boldsymbol{Z} = AY + B \sim N_p(\boldsymbol{A\mu}, \boldsymbol{A\Sigma A^T})$$
+
+Now, if we consider an example where we let $\boldsymbol{Y} \sim N_n(\boldsymbol{\mu}, \boldsymbol{\Sigma})$ and we let $\boldsymbol{A} = [1, ..., 1]^T$, then we have that $$\boldsymbol{AY} \sim N_1(\boldsymbol{A\mu}, A\Sigma A^T)$$ where $\boldsymbol{A\mu} = \sum_{i = 1}^{n} \mu_i, \boldsymbol{A\Sigma A^T} = \sum \sigma_j^2 + 2\sum_{i\neq j} \sigma_{ij}$.
+
+## Matrix Approach to Linear Regression
+
+If we use the matrix representation in regression, it makes it easy to generalize to fitting several independent variables. This would go beyond 1 independent variable. This approach is also known as Multiple Linear Regression.
+
+We use vectors and matrices to denote the observations of the independent variables, the dependent variable, the coefficients, and the random term. 
+
+\begin{itemize}
+  \item We let $\boldsymbol{Y} = \begin{bmatrix} Y_1 & \dots & Y_n \end{bmatrix}^T$ be the transpose of the column vector of obervations of the dependent variable
+  \item We let $\boldsymbol{\beta} = \begin{bmatrix} \beta_1 & \dots & \beta_n \end{bmatrix}^T$ be the transpose of the column vector of coefficients
+  \item We let $\boldsymbol{\epsilon} = \begin{bmatrix} \epsilon_1 & \dots & \epsilon_n \end{bmatrix}^T$ be the transpose of the column vectors of the error terms
+  \item We let $\boldsymbol{X} = \begin{pmatrix} 1 & X_{1, 1} & \dots & X_{1, p-1} \\ 1 & X_{2, 1} & \dots &X_{2, p-1} \\ \dots & \dots & \dots & \dots \\ 1 & X_{n, 1} & \dots & X_{n, p-1} \end{pmatrix}$ be the matrix which incorporates the $p-1$ explanatory variables. 
+\end{itemize}
+
+If $\boldsymbol{\epsilon} \sim N_n(0, \sigma^2 \boldsymbol{I_n})$, then the regression model may be expressed as $$\boldsymbol{Y} = \boldsymbol{X\beta + \epsilon} \sim N_n(\boldsymbol{X\beta}, \sigma^2 \boldsymbol{I_n})$$ where $\boldsymbol{I_n}$ is the $n \times n$ identity matrix and $N_n$ is the multivariate normal distribution. 
+
+The above is the same as saying that if $\epsilon_i \sim N(0, \sigma^2)$ for $i = 1, ..., n$, then we have that $$Y_i = \beta_0 + \beta_1X_{i, 1} + \beta_2X_{i, 2} + \dots + \beta_{p-1}X_{i, p-1} + \epsilon_i \sim N(\beta_0 + \beta_1X_{i, 1} + \beta_2X_{i, 2} + \dots + \beta_{p-1}X_{i, p-1}, \sigma^2)$$ for $i = 1, ..., n$.
+
+The matrix approach is much nicer because it is more compact and it's can compute more values easily.
+
+## Least Squares Estimations
+
+We want to find an estimate for the vector $\boldsymbol{\beta}$. To do this, we use the least squares approach. However, we're no longer using just scalars. We're instead dealing with vectors and matrices. We need formulas to take derivatives. Below are some facts for taking derivatives in matrix notation.
+
+\begin{itemize}
+  \item If $z = \boldsymbol{a}^T\boldsymbol{y}$, then we have $\frac{\partial z}{\partial \boldsymbol{y}} = \boldsymbol{a}$
+  \item If $z = \boldsymbol{y}^T\boldsymbol{y}$, then we have $\frac{\partial z}{\partial \boldsymbol{y}} = 2\boldsymbol{y}$
+  \item If $z = \boldsymbol{a}^T\boldsymbol{A}\boldsymbol{y}$, then we have $\frac{\partial z}{\partial y} = \boldsymbol{A}^T\boldsymbol{a}$
+  \item If $z = \boldsymbol{y}^T\boldsymbol{Ay}$, then we have $\frac{\partial z}{\partial \boldsymbol{y}} = \boldsymbol{A}^T\boldsymbol{y} + \boldsymbol{Ay}$
+  \item If $z = \boldsymbol{y}^T\boldsymbol{Ay}$, and $\boldsymbol{A}$ is symmetric, then we have $\frac{\partial z}{\partial \boldsymbol{y}} = 2\boldsymbol{A}^T\boldsymbol{y}$
+\end{itemize}
+
+Using the derivative formulas above, we can derive the least squares estimate of the vector $\boldsymbol{\beta}$. To do this, we need to minimize the function 
+
+\begin{equation*}
+\begin{split}
+  Q 
+  &= \boldsymbol{\epsilon}^T\boldsymbol{\epsilon} \\
+  &= \sum_{i = 1}^{n} \epsilon_i^2 \\
+  &= (\boldsymbol{Y - X\beta})^T(\boldsymbol{Y - X\beta})
+\end{split}
+\end{equation*}
+
+We can differentiate $Q$ and then obtain the estimate for $\boldsymbol{\beta}$. If we differentiate $Q$, we get $$\frac{\partial Q}{\partial \boldsymbol{\beta}} = -2\boldsymbol{X}^T(\boldsymbol{Y} - \boldsymbol{X\beta})$$. We then set the equation to 0. Then after we solve the equation, we get that a solution for $\boldsymbol{\beta}$ is $\boldsymbol{b} = \boldsymbol{(X^TX)^{-1}X^TY}$.
+
+Therefore, the least squares estimate for $\boldsymbol{\beta}$ is $\boldsymbol{b} = \boldsymbol{(X^TX)^{-1}X^TY}$ if the matrix $(\boldsymbol{X^TX})^{-1}$ exists.
+
+We have that $\boldsymbol{b} = \boldsymbol{(X^TX)^{-1}X^TY}$ is an unbiased estimator of $\boldsymbol{\beta}$. To prove this, we have that
+
+\begin{equation*}
+  \begin{split}
+    E[\boldsymbol{b}]
+    &= \boldsymbol{(X^TX)^{-1}X^TE[Y]} \\
+    &= \boldsymbol{(X^TX)^{-1}X^TX\beta} \\
+    &= \boldsymbol{\beta}
+  \end{split}
+\end{equation*}
+
+This means that the least squares estimates of all the parameters are unbiased estimators of their respective parameters.
+
+Now, we want to find the variance-covariance matrix of $\boldsymbol{b}$.
+
+If we let $\boldsymbol{b} = \boldsymbol{AY}$, where $\boldsymbol{A} = \boldsymbol{(X^TX)^{-1}X^T}$. Then we get
+
+\begin{equation*}
+\begin{split}
+  Cov(\boldsymbol{b}) 
+  &= \boldsymbol{A\Sigma A} \\
+  &= \sigma^2 \boldsymbol{AA^T} \\
+  &= \sigma^2(\boldsymbol{(X^TX)^{-1}(X^TX)(X^TX)^{-1}}) \\
+  &= \sigma^2 (\boldsymbol{X^TX})^{-1}
+\end{split}
+\end{equation*}
+
+We get that $Cov(\boldsymbol{b}) = \sigma^2(\boldsymbol{X^TX})^{-1}$. We have therefore computed the variances of all the least-squares estimates of the parameters and the covariances between them. This is the nice thing about matrix notation, we can compute more values in one shot.
+
+Now that we have computed the expectation and variance of $\boldsymbol{b}$, we can now determine its distribution. We get that $\boldsymbol{b} \sim N_p(\boldsymbol{\beta}, \sigma^2(\boldsymbol{X^TX})^{-1})$.
+
+## The Hat Matrix and its Properties
+
+The predicted value of $\boldsymbol{Y}$ is written as $$\boldsymbol{\hat{Y}} = \boldsymbol{Xb}$$. We can rewrite the equation as $$\boldsymbol{\hat{Y}} = \boldsymbol{HY}$$ where $\boldsymbol{H} = \boldsymbol{X(X^TX)^{-1}X}$. We call $\boldsymbol{H}$ the "hat" matrix.
+
+We have that the hat matrix $\boldsymbol{H}$ is a projection matrix onto the estimation space. It projects $\boldsymbol{Y}$ onto the estimation space, leading to $\boldsymbol{\hat{Y}} = \boldsymbol{HY}$. The hat matrix is also idempotent. To show this, we have that
+
+\begin{equation*}
+\begin{split}
+  \boldsymbol{HH}
+  &= \boldsymbol{X(X^TX)^{-1}X^TX(X^TX)^{-1}X^T} \\
+  &= \boldsymbol{XI_n(X^TX)^{-1}X^T}\\
+  &= \boldsymbol{X(X^TX)^{-1}X^T} \\
+  &= \boldsymbol{H}
+\end{split}
+\end{equation*}
+
+The hat matrix is also symmetric, which means that $\boldsymbol{H^T} = \boldsymbol{H}$. To show this, we have
+
+\begin{equation*}
+\begin{split}
+  \boldsymbol{H^T}
+  &= \boldsymbol{(X(X^TX)^{-1}X^T)^T} \\
+  &= \boldsymbol{X(X^TX)^{-1}X^T} \\
+  &= \boldsymbol{H}
+\end{split}
+\end{equation*}
+
+We also have that the matrix $\boldsymbol{(I-H)}$ is idempotent ($\boldsymbol{I}$ is the identity matrix). To show this, we have
+
+\begin{equation*}
+\begin{split}
+  \boldsymbol{(I-H)(I-H)}
+  &= \boldsymbol{II - IH - HI + HH} \\
+  &= \boldsymbol{I - H - H + H} \\
+  &= \boldsymbol{I - H}
+\end{split}
+\end{equation*}
+
+We have that the matrix $\boldsymbol{H}$ and the matrix $\boldsymbol{I-H}$ are orthogonal. To show this, we have
+
+\begin{equation*}
+\begin{split}
+  \boldsymbol{H(I-H)}
+  &= \boldsymbol{HI - HH} \\
+  &= \boldsymbol{H - H} \\
+  &= \boldsymbol{0}
+\end{split}
+\end{equation*}
+
+We can express the residual vector as $\boldsymbol{e} = \boldsymbol{(I-H)Y}$. To show this, we have
+
+\begin{equation*}
+\begin{split}
+  \boldsymbol{e}
+  &= \boldsymbol{Y - \hat{Y}} \\
+  &= \boldsymbol{Y - HY} \\
+  &= \boldsymbol{(I-H)Y}
+\end{split}
+\end{equation*}
+
+Putting all the properties together, we have that $\boldsymbol{\hat{Y}} = \boldsymbol{HY}$, $\boldsymbol{e} = \boldsymbol{(I-H)Y}$, and $\boldsymbol{Y} = \boldsymbol{HY + (I-H)Y}$. We get that by the Pythagorean theorem, we have $$||\boldsymbol{Y}||^2 = ||\boldsymbol{HY}||^2 + ||\boldsymbol{(I-H)Y}||^2$$
+
+We also get that $Cov[\boldsymbol{e}] = \sigma^2(\boldsymbol{I-H})$, which is estimated by $s^2[\boldsymbol{e}] = MSE(\boldsymbol{I-H})$.
+
+Now, we want to consider the special case where $p = 2$. This is the case with 1 predictor variable, which goes back to simple linear regression. We want to compute the hat matrix for this case.
+
+We let $\boldsymbol{X} = \begin{pmatrix} 1 & (X_1 - \overline{X}) \\ \dots & \dots \\ 1 & (X_n - \overline{X}) \end{pmatrix}$. Then we have that $\boldsymbol{X^TX} = \begin{pmatrix} n & 0 \\ 0 & \sum (X_i - \overline{X})^2 \end{pmatrix}$. Then we get that $\boldsymbol{(X^TX)^{-1}} = \begin{pmatrix} \sum (X_i - \overline{X})^2 & 0 \\ 0 & n \end{pmatrix} \frac{1}{n \sum (X_i - \overline{X})}$. 
+
+Now, we can compute the hat matrix.
+
+\begin{equation*}
+\begin{split}
+  \boldsymbol{H}
+  &= \boldsymbol{(X^TX)^{-1}X^T} \\
+  &= \begin{pmatrix} \sum (X_i - \overline{X})^2 + n(X_1 - \overline{X})^2 & \dots & \sum (X_i - \overline{X})^2 + n(X_1 - \overline{X})^2 + n(X_1 - \overline{X})(X_n - \overline{X}) \\ \dots & \dots & \dots \\ \sum(X_i - \overline{X})^2 + n(X_1 - \overline{X})(X_n - \overline{X}) & \dots & \sum (X_i - \overline{X})^2 + n(X_n - \overline{X})^2 \end{pmatrix} \cdot \frac{1}{n\sum (X_i - \overline{X})^2}\\
+  &= \begin{pmatrix} \frac{1}{n} & \dots & \frac{1}{n} \\ \dots & \dots & \dots \\ \frac{1}{n} & \dots & \frac{1}{n} \end{pmatrix} + \begin{bmatrix} X_1 - \overline{X} \\ \dots \\ X_n - \overline{X} \end{bmatrix} \begin{bmatrix} X_1 - \overline{X} & \dots & X_n - \overline{X} \end{bmatrix} \frac{1}{\sum (X_i - \overline{X})^2} \\
+  &= \frac{1}{n} \boldsymbol{J} + \begin{bmatrix} X_1 - \overline{X} \\ \dots \\ X_n - \overline{X} \end{bmatrix} \begin{bmatrix} k_1 & \dots & k_n \end{bmatrix}\\
+\end{split}
+\end{equation*}
+
+Note: $\boldsymbol{J}$ is a matrix of 1s.
+
+Now that we have computed the hat matrix for 2 predictor variables, we can compute the least squares regression line in matrix form.
+
+\begin{equation*}
+\begin{split}
+  \hat{\boldsymbol{Y}}
+  &= \boldsymbol{HY} \\
+  &= \frac{1}{n}\boldsymbol{JY} + \begin{bmatrix} X_1 - \overline{X} \\ \dots \\ X_n - \overline{X} \end{bmatrix} \begin{bmatrix} k_1 & \dots & k_n \end{bmatrix} \boldsymbol{Y} \\
+  &= \begin{bmatrix} \overline{Y} \\ \dots \\ \overline{Y} \end{bmatrix} + \begin{bmatrix} X_1 - \overline{X} \\ \dots \\ X_n - \overline{X} \end{bmatrix} b_1 \\
+  &= \overline{Y}\boldsymbol{1_n} + b_1 \begin{bmatrix} X_1 - \overline{X} \\ \dots \\ X_n - \overline{X} \end{bmatrix}
+\end{split}   
+\end{equation*}
+
+Now, we can find the trace and rank of the hat matrix $\boldsymbol{H}$ and we show that it is equal to 2.
+
+\begin{equation*}
+  \begin{split}
+  Rank(\boldsymbol{H})
+  &= Trace(\boldsymbol{H}) \\
+  &= \frac{n\sum(X_i - \overline{X})^2 + n\sum (X_i - \overline{X})^2}{n\sum (X_i - \overline{X})^2} \\
+  &= 2
+  \end{split}
+\end{equation*}
+
+## Quadratic Forms
+
+We now want to look at the theory behind the relationship between sums of squares. We first need to look at a fundamental concept.
+
+If we let $Y_1, ..., Y_n$ be a random sample from $N(\mu, \sigma^2)$. A quadratic form in the $Y$'s is defined to be the real quantity $\boldsymbol{Q} = \boldsymbol{Y^TAY}$, where $\boldsymbol{A}$ is a symmetric positive definite matrix. The singular decomposition of $\boldsymbol{A}$ implies that there exists an orthogonal matrix $\boldsymbol{P}$ such that if $\boldsymbol{\Lambda} = (\lambda_i)$ is the diagonal matrix of eigenvalues of $\boldsymbol{A}$, we have $\boldsymbol{A} = \boldsymbol{P^T\Lambda P}$.
+
+Proportion: $E[\boldsymbol{Y^TAY}] = Trace[\boldsymbol{A\Sigma}] + E[\boldsymbol{Y}]^T\boldsymbol{A}E[\boldsymbol{Y}]$.
+
+To show this, we have
+
+\begin{equation*}
+\begin{split}
+  \boldsymbol{Y^TAY}
+  &= \boldsymbol{Y^TP^T\Lambda PY} \\
+  &= \boldsymbol{(PY)^T\Lambda (PY)} \\
+  &= \sum \lambda_i ||(\boldsymbol{PY})_i||^2 \\
+\end{split}
+\end{equation*}
+
+where $(\boldsymbol{PY})_i$ is the i-th element in the vector $PY$. The second moment of $(\boldsymbol{PY})_i$ is
+
+\begin{equation*}
+\begin{split}
+  E[||(\boldsymbol{PY})_i||^2]
+  &= Var[||(\boldsymbol{PY})_i||] + (E[(\boldsymbol{PY})_i])^2 \\
+  &= (\boldsymbol{P\Sigma P^T})_{ii} + [(\boldsymbol{PE[Y]})_i]^2
+\end{split}
+\end{equation*}
+
+Now, we get
+
+\begin{equation*}
+\begin{split}
+  E[\sum \lambda_i ||(PY)_i||^2] 
+  &= \sum \lambda_i (\boldsymbol{P\Sigma P^T})_{ii} + \sum \lambda_i [(\boldsymbol{PE[Y]})_i]^2 \\
+  &= Trace(\Lambda \boldsymbol{P \Sigma P^T}) + \boldsymbol{\mu^T A \mu} \\
+  &= Trace(\boldsymbol{P^T \Lambda P \Sigma}) + \boldsymbol{\mu^T A \mu} \\
+  &= Trace(\boldsymbol{A\Sigma}) + \boldsymbol{\mu^T A \mu}
+\end{split}
+\end{equation*}
+
+Lemma: The mean squared error is an unbiased estimate of $\sigma^2$.
+
+To prove this, we have that the residual sum of squares (SSE) is 
+
+$$\sum e_i^2 = \sum(Y_i - \hat{Y})^2$$
+
+This can be written in matrix notation as
+
+$$(\boldsymbol{Y - \hat{Y}})^T(\boldsymbol{Y - \hat{Y}})$$
+
+We also know for a fact that $\boldsymbol{Y - \hat{Y}} = \boldsymbol{(I - H)Y}$ and $\boldsymbol{I-H}$ is idempotent. We get that
+
+$$(\boldsymbol{Y - \hat{Y}})^T(\boldsymbol{Y - \hat{Y}}) = \boldsymbol{Y^T(I-H)Y}$$
+Then we have that
+
+\begin{equation*}
+  \begin{split}
+    E[\boldsymbol{Y^T(I-H)Y}]
+    &= Trace(\boldsymbol{(I-H)\Sigma}) + \boldsymbol{\mu^T(I-H)\mu} \\
+    &= \sigma^2 Trace(\boldsymbol{I - H}) + (\boldsymbol{X\beta})^T(\boldsymbol{I - H})(\boldsymbol{X\beta}) \\
+    &= \sigma^2(n-p) + \boldsymbol{\beta^TX^T}(\boldsymbol{I - X(X^TX)^{-1}X^T})\boldsymbol{X\beta} \\
+    &= \sigma^2(n-p) + \boldsymbol{\beta^T(X^T - X^TX(X^TX)^{-1}X^T)X\beta} \\
+    &= \sigma^2(n-p) + \boldsymbol{\beta^T(X^T-X^T)X\beta} \\
+    &= \sigma^2(n-p) + 0 \\
+    &= \sigma^2(n-p)
+  \end{split}
+\end{equation*}
+
+Consequently, we get that
+
+\begin{equation*}
+\begin{split}
+  E[MSE]
+  &= E[\frac{SSE}{n-p}] \\
+  &= \frac{E[SSE]}{n-p} \\
+  &= \frac{\sigma^2(n-p)}{n-p} \\
+  &= \sigma^2
+\end{split}
+\end{equation*}
+
+## Chi-Squared distribution and F distribution
+
+A random variable $U$ has a chi-squared $\chi^2_{\nu}$ distribution with $\nu$ degrees of freedom if its density is given by
+
+$$f(u; \nu) = \frac{1}{2^{\frac{\nu}{2}} \Gamma(\nu/2)} u^{(\nu/2)-1}e^{-u/2}$$ for $u>0, \nu > 0$. The mean of $U$ is $\nu$ and the variance of $U$ is $2\nu$.
+
+A random variable $U$ has a non-central chi-squared distribution $\chi^2_{\nu}(\lambda)$ with $\nu$ degrees of freedom and non-centrality parameter $\lambda$ if its density is given by
+
+$$f(u; \nu, \lambda) = \sum_{i=0}^{\infty} e^{-\lambda/2} \frac{(\lambda/2)^i}{i!}f(u; \nu + 2i)$$ with $u>0, \nu>0$. The mean of $U$ is $\nu + \lambda$ and the variance of $U$ is $2\nu + 4\lambda$.
+
+If we let $U_1 \sim \chi^2_{\nu_1}$ and $U_2 \sim \chi^2_{\nu_2}$, then we have that $$F = \frac{U_1/\nu_1}{U_2/\nu_2} \sim F(\nu_1, \nu_2)$$ If the numerator has a non-central chi-squared distribution, then F has a non-central F distribution.
+
+## Cochran's Theorem
+
+Cochran's Theorem states that if we let $Y$ be a random vector with a multivariate normal distribution $N_n(\boldsymbol{\mu}, \sigma^2 \boldsymbol{I})$ and suppose that we have the decomposition $$\boldsymbol{Y^TY} = Q_1 + \dots + Q_k$$ where $Q_i = \boldsymbol{Y^TA_iY}$ and $rank(A_i) = n_i$. Then $\frac{Q_i}{\sigma^2}$ are independent and have a non-central chi-squared distribution with $n_i$ degrees of freedom and non-centrality parameter $\lambda_i$, where $\lambda_i = \boldsymbol{\mu^T A_i \mu}$.
+
+We have some examples of quadratic forms that are particularly important for analysis.
+
+We let $\boldsymbol{Y} \sim N_n(\boldsymbol{\mu}, \sigma^2\boldsymbol{I_n})$ be the response vector. We can decompose $\boldsymbol{Y^TY}$ the following way:
+
+$$\boldsymbol{Y^TY} = \boldsymbol{Y^TAY} + \boldsymbol{Y^T}\frac{\boldsymbol{1_n1_n^T}}{n}\boldsymbol{Y}$$ 
+where $\boldsymbol{A} = \begin{pmatrix} 1-\frac{1}{n} & -\frac{1}{n} & \dots & -\frac{1}{n} \\ -\frac{1}{n} & 1 - \frac{1}{n} & \dots & -\frac{1}{n} \\ \dots & \dots & \dots & \dots \\ -\frac{1}{n} & -\frac{1}{n} & \dots & 1-\frac{1}{n} \end{pmatrix}$ and $\boldsymbol{1_n} = \begin{bmatrix} 1 \\ 1 \\ \dots \\ 1 \end{bmatrix}$. 
+
+We can rewrite $\boldsymbol{Y^TAY}$ the following way:
+
+\begin{equation*}
+\begin{split}
+  \boldsymbol{Y^TAY}
+  &= \begin{bmatrix} Y_1 & \dots & Y_n \end{bmatrix} \begin{pmatrix} 1 - \frac{1}{n} & -\frac{1}{n} & \dots & \frac{1}{n} \\ -\frac{1}{n} & 1 - \frac{1}{n} & \dots & -\frac{1}{n} \\ \dots & \dots & \dots & \dots \\ -\frac{1}{n} & -\frac{1}{n} & \dots & 1 - \frac{1}{n} \end{pmatrix} \begin{bmatrix} Y_1 \\ Y_2 \\ \dots \\ Y_n \end{bmatrix}
+\end{split}
+\end{equation*}
