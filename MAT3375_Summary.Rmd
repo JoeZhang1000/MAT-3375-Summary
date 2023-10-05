@@ -1004,3 +1004,9 @@ We can rewrite $\boldsymbol{Y^TAY}$ the following way:
   &= \sum (Y_i - \overline{Y})^2
 \end{split}
 \end{equation*}
+
+We can also rewrite $\boldsymbol{Y}^T\frac{\boldsymbol{1_n^T1_n}}{n}\boldsymbol{Y}$ the following way:
+
+\begin{equation*}
+\begin{split}
+  \boldsymbol{Y}^T \frac{\boldsymbol{1_n^T1_n}}
