@@ -1033,5 +1033,20 @@ We usually see models with 2 or more predictor variables rather than 1 in the ca
 
 In a model with $p - 1$ predictors, we have that the model is in the form $$Y_i = \beta_0 + \sum_{i=1}^{p-1}\beta_kX_{ik} + \epsilon_i$$ where $\beta_k$ is the rate of change in a unit increase in $X_k$ when all other explanatory variables are held fixed.
 
+## Matrix Approach: Review
+
+To make the equation of the linear model more compact, we use the matrix notation discussed in section 2. 
+
+\begin{itemize}
+  \item We let $\boldsymbol{Y} = \begin{bmatrix} Y_1 & \dots & Y_n \end{bmatrix}^T$ be the transpose of the column vector of obervations of the dependent variable
+  \item We let $\boldsymbol{\beta} = \begin{bmatrix} \beta_1 & \dots & \beta_n \end{bmatrix}^T$ be the transpose of the column vector of coefficients
+  \item We let $\boldsymbol{\epsilon} = \begin{bmatrix} \epsilon_1 & \dots & \epsilon_n \end{bmatrix}^T$ be the transpose of the column vectors of the error terms
+  \item We let $\boldsymbol{X} = \begin{pmatrix} 1 & X_{1, 1} & \dots & X_{1, p-1} \\ 1 & X_{2, 1} & \dots &X_{2, p-1} \\ \dots & \dots & \dots & \dots \\ 1 & X_{n, 1} & \dots & X_{n, p-1} \end{pmatrix}$ be the matrix which incorporates the $p-1$ explanatory variables. 
+\end{itemize}
+
+Then we can write the model as $$\boldsymbol{Y} = \boldsymbol{X\beta} + \boldsymbol{\epsilon}$$ with $\boldsymbol{\epsilon} \sim N_n(0, \sigma^2\boldsymbol{I_n})$.
+
+Recall that the least squares estimator for $\boldsymbol{\beta}$ is $\boldsymbol{b} = \boldsymbol{(X^TX)^{-1}X^TY}$ and the fitted values are $\boldsymbol{\hat{Y}} = \boldsymbol{Xb} = \boldsymbol{HY}$, where $\boldsymbol{H} = \boldsymbol{X(X^TX)^{-1}X^T}$.
+
 
 
