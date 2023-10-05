@@ -1009,4 +1009,29 @@ We can also rewrite $\boldsymbol{Y}^T\frac{\boldsymbol{1_n^T1_n}}{n}\boldsymbol{
 
 \begin{equation*}
 \begin{split}
-  \boldsymbol{Y}^T \frac{\boldsymbol{1_n^T1_n}}
+  \boldsymbol{Y}^T \frac{\boldsymbol{1_n^T1_n}}{n} \boldsymbol{Y} 
+  &= \boldsymbol{Y}^T \frac{\boldsymbol{J_n}}{n} \boldsymbol{Y} \\
+  &= \begin{bmatrix} Y_1 & Y_2 & \dots & Y_n \end{bmatrix} \begin{pmatrix} \frac{1}{n} & \frac{1}{n} & \dots & \frac{1}{n} \\ \frac{1}{n} & \frac{1}{n} & \dots & \frac{1}{n} \\ \dots & \dots & \dots & \dots \\ \frac{1}{n} & \frac{1}{n} & \dots & \frac{1}{n} \end{pmatrix} \begin{bmatrix} Y_1 \\ Y_2 \\ \dots \\ Y_n \end{bmatrix} \\
+  &= \begin{bmatrix} \overline{Y} & \overline{Y} & \dots & \overline{Y} \end{bmatrix} \begin{bmatrix} Y_1 \\ Y_2 \\ \dots \\ Y_n \end{bmatrix} \\
+  &= n\overline{Y}
+\end{split}
+\end{equation*}
+
+So now we get that $\boldsymbol{Y^TY} = \sum (Y_i - \overline{Y})^2 + n\overline{Y}$. We can now look at the degrees of freedom of $\sum (Y_i - \overline{Y})^2$ and $n\overline{Y}$.
+
+We get that $\sum (Y_i - \overline{Y})^2 = \boldsymbol{Y^TAY}$, where $\boldsymbol{A} = \begin{pmatrix} 1-\frac{1}{n} & -\frac{1}{n} & \dots & -\frac{1}{n} \\ -\frac{1}{n} & 1-\frac{1}{n} & \dots & -\frac{1}{n} \\ \dots & \dots & \dots & \dots \\ -\frac{1}{n} & -\frac{1}{n} & \dots & 1 - \frac{1}{n} \end{pmatrix}$. We know that $A$ is idempotent and symmetric. Then we get that $rank(A) = trace(A) = n(1 - \frac{1}{n}) = n - 1$. This explains why $\frac{\sum (Y_i - \overline{Y})^2}{\sigma^2}$ has a chi-squared distribution with $n-1$ degrees of freedom.
+
+We also know that $\frac{\boldsymbol{1_n1_n^T}}{n}$ is an $n \times n$ matrix with $\frac{1}{n}$ as all its entries. This makes it an idempotent and symmetric matrix. It has $rank = trace = n(\frac{1}{n}) = 1$.
+
+Therefore, we get that the ranks sum up to $n$ and we have proven that $\frac{\sum(Y_i - \overline{Y})^2}{\sigma^2}$ has a chi-squared distribution with $n-1$ degrees of freedom.
+
+# Multiple Linear Regression
+
+## Linear models with 2 or more predictors
+
+We usually see models with 2 or more predictor variables rather than 1 in the case of simple linear regression. For instance, with 2 predictors, we have models in the form $$Y_i = \beta_0 + \beta_1X_1 + \beta_2X_2 + \epsilon_i$$ with $\epsilon_i \sim N(0, \sigma^2)$. This model displays a plane in 3 dimensions and $\beta_1$ represents the rate of change in a unit increase in $X_1$ when $X_2$ is fixed and vice versa for $\beta_2$.
+
+In a model with $p - 1$ predictors, we have that the model is in the form $$Y_i = \beta_0 + \sum_{i=1}^{p-1}\beta_kX_{ik} + \epsilon_i$$ where $\beta_k$ is the rate of change in a unit increase in $X_k$ when all other explanatory variables are held fixed.
+
+
+
