@@ -1052,4 +1052,33 @@ We also recall that the variance-covariance matrix of the residuals is $Cov(\bol
 
 We can perform ANOVA on multiple regression models. To do this, it is similar to simple linear regression, except that we need to use matrix notation to write the sums of squares. We have that
 
+\begin{itemize}
+  \item $SSTO = \boldsymbol{Y^TY} - \frac{1}{n}\boldsymbol{Y^TJY} = \boldsymbol{Y^T}(\boldsymbol{I} - \frac{1}{n}\boldsymbol{J})\boldsymbol{Y}$
+  \item $SSE = \boldsymbol{e^Te} = \boldsymbol{Y^T(I-H)Y}$
+  \item $SSR = \boldsymbol{b^TX^TY} - \frac{1}{n}\boldsymbol{Y^TJY} = \boldsymbol{Y^T}(\boldsymbol{H} - \frac{1}{n}\boldsymbol{J})\boldsymbol{Y}$
+\end{itemize}
 
+These values are all in quadratic form. We get that $SSTO = SSR + SSE$. By Cochran's theorem, we get that SSR, SSE, and SSTO have a chi-squared distribution with degrees of freedom $p-1$, $n-p$, and $n-1$, respectively. This can be shown by computing the ranks of the matrices $\boldsymbol{H - \frac{1}{n}J}$ and $\boldsymbol{I-H}$. The ANOVA table is the same as for simple linear regression except that SSR has degree of freedom $p - 1$ and SSE has degree of freedom $n - p$. This is not restricted to $p = 2$. Below is the typical structure of an ANOVA table (this is the same as for simple linear regression). 
+
+\begin{table}[!h]
+\centering
+\caption{ANOVA Table}
+\begin{tabular}{|c|c|c|c|c|c|}
+
+\hline
+Source & Sum of Squares (SS) & df & Mean Square (MS = SS/df) & F statistic & E[MS] \\
+\hline
+Regression & $SSR = b_1^2\sum(X_i - \overline{X})^2$ & $p - 1$ & $MSR = \frac{SSR}{p-1}$ & $\frac{MSR}{MSE}$ & $\sigma^2 + \beta_1^2 \sum(X_i - \overline{X})^2$ \\
+\hline
+Error & $SSE = \sum (Y_i - \hat{Y_i})^2$ & $n - p$ & $MSE = \frac{SSE}{n-p}$ & & $\sigma^2$\\
+\hline
+& & & & & \\
+\hline
+Total & $SSTO = \sum(Y_i - \overline{Y})^2$ & $n - 1$ & & &\\
+\hline
+  
+\end{tabular}
+\label{lyxtab2}
+\end{table}
+
+We can use this to test the null hypothesis $H_0: \beta_1 = \beta_2 = \dots = \beta_{p-1} = 0$ against $H_1: \text{not all } \beta_k = 0$. We do this by looking at the F statistic $F = \frac{MSR}{MSE}$ and we reject $H_0$ for large values of F.
