@@ -1048,5 +1048,8 @@ Then we can write the model as $$\boldsymbol{Y} = \boldsymbol{X\beta} + \boldsym
 
 Recall that the least squares estimator for $\boldsymbol{\beta}$ is $\boldsymbol{b} = \boldsymbol{(X^TX)^{-1}X^TY}$ and the fitted values are $\boldsymbol{\hat{Y}} = \boldsymbol{Xb} = \boldsymbol{HY}$, where $\boldsymbol{H} = \boldsymbol{X(X^TX)^{-1}X^T}$.
 
+We also recall that the variance-covariance matrix of the residuals is $Cov(\boldsymbol{e}) = \sigma^2(\boldsymbol{I-H})$, which can be estimated by $s^2[\boldsymbol{e}] = (MSE)(\boldsymbol{I-H})$. We also have $s^2[\boldsymbol{b}] = (MSE)(\boldsymbol{X^TX})^{-1}$.
+
+We can perform ANOVA on multiple regression models. To do this, it is similar to simple linear regression, except that we need to use matrix notation to write the sums of squares. We have that
 
 
