@@ -988,13 +988,19 @@ We have some examples of quadratic forms that are particularly important for ana
 We let $\boldsymbol{Y} \sim N_n(\boldsymbol{\mu}, \sigma^2\boldsymbol{I_n})$ be the response vector. We can decompose $\boldsymbol{Y^TY}$ the following way:
 
 $$\boldsymbol{Y^TY} = \boldsymbol{Y^TAY} + \boldsymbol{Y^T}\frac{\boldsymbol{1_n1_n^T}}{n}\boldsymbol{Y}$$ 
-where $\boldsymbol{A} = \begin{pmatrix} 1-\frac{1}{n} & -\frac{1}{n} & \dots & -\frac{1}{n} \\ -\frac{1}{n} & 1 - \frac{1}{n} & \dots & -\frac{1}{n} \\ \dots & \dots & \dots & \dots \\ -\frac{1}{n} & -\frac{1}{n} & \dots & 1-\frac{1}{n} \end{pmatrix}$ and $\boldsymbol{1_n} = \begin{bmatrix} 1 \\ 1 \\ \dots \\ 1 \end{bmatrix}$. 
+where $\boldsymbol{A} = \begin{pmatrix} 1-\frac{1}{n} & -\frac{1}{n} & \dots & -\frac{1}{n} \\ -\frac{1}{n} & 1 - \frac{1}{n} & \dots & -\frac{1}{n} \\ \dots & \dots & \dots & \dots \\ -\frac{1}{n} & -\frac{1}{n} & \dots & 1-\frac{1}{n} \end{pmatrix}$ (an $n \times n$ matrix with $1-\frac{1}{n}$ on the diagonals and $-\frac{1}{n}$ on the off-diagonals) and $\boldsymbol{1_n} = \begin{bmatrix} 1 \\ 1 \\ \dots \\ 1 \end{bmatrix}$ (n-dimensional column vector with all 1s). 
 
 We can rewrite $\boldsymbol{Y^TAY}$ the following way:
 
 \begin{equation*}
 \begin{split}
   \boldsymbol{Y^TAY}
-  &= \begin{bmatrix} Y_1 & \dots & Y_n \end{bmatrix} \begin{pmatrix} 1 - \frac{1}{n} & -\frac{1}{n} & \dots & \frac{1}{n} \\ -\frac{1}{n} & 1 - \frac{1}{n} & \dots & -\frac{1}{n} \\ \dots & \dots & \dots & \dots \\ -\frac{1}{n} & -\frac{1}{n} & \dots & 1 - \frac{1}{n} \end{pmatrix} \begin{bmatrix} Y_1 \\ Y_2 \\ \dots \\ Y_n \end{bmatrix}
+  &= \begin{bmatrix} Y_1 & \dots & Y_n \end{bmatrix} \begin{pmatrix} 1 - \frac{1}{n} & -\frac{1}{n} & \dots & \frac{1}{n} \\ -\frac{1}{n} & 1 - \frac{1}{n} & \dots & -\frac{1}{n} \\ \dots & \dots & \dots & \dots \\ -\frac{1}{n} & -\frac{1}{n} & \dots & 1 - \frac{1}{n} \end{pmatrix} \begin{bmatrix} Y_1 \\ Y_2 \\ \dots \\ Y_n \end{bmatrix} \\
+  &= \begin{bmatrix} Y_1 - \overline{Y} & Y_2 - \overline{Y} & \dots & Y_n - \overline{Y} \end{bmatrix} \begin{bmatrix} Y_1 \\ Y_2 \\ \dots \\ Y_n \end{bmatrix} \\
+  &= Y_1(Y_1 - \overline{Y}) + Y_2(Y_2 - \overline{Y}) + \dots + Y_n(Y_n - \overline{Y}) \\
+  &= \sum Y_i(Y_i - \overline{Y}) \\
+  &= \sum Y_i^2 - \overline{Y} \sum Y_i \\
+  &= \sum Y_i^2 - n\overline{Y} \\
+  &= \sum (Y_i - \overline{Y})^2
 \end{split}
 \end{equation*}
