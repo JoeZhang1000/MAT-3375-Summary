@@ -1082,3 +1082,17 @@ Total & $SSTO = \sum(Y_i - \overline{Y})^2$ & $n - 1$ & & &\\
 \end{table}
 
 We can use this to test the null hypothesis $H_0: \beta_1 = \beta_2 = \dots = \beta_{p-1} = 0$ against $H_1: \text{not all } \beta_k = 0$. We do this by looking at the F statistic $F = \frac{MSR}{MSE}$ and we reject $H_0$ for large values of F.
+
+We can also do hypothesis tests for individual coefficients. Say we test $H_0: \beta_k = 0$ against $H_1: \beta_k \neq 0$, then we can compute the test statistic $$t = \frac{b_k}{s[b_k]} \sim t_{n-p}$$ and we reject $H_0$ for large values of t. ($s^2[b_k] = MSE(\boldsymbol{X^TX})_{kk}^{-1}$).
+
+## Extra Sums of Squares Principle 
+
+We can use a more general approach to regression to test if we can fit a reduced model rather than a full model to model the data. We first illustrate the case for $p = 2$.
+
+To do this, we let the full model (F) be the model $Y = \beta_0 + \beta_1X + \epsilon$ and the reduced model (R) be the model $Y = \beta_0 + \epsilon$. We compute the error sum of squares for each model. We get that $SSE(F) = \sum (Y_i - \hat{Y_i})^2$ for the full model and $SSE(R) = \sum(Y_i - \hat{Y_i})^2$ for the reduced model. This way we can test $H_0: \beta_1 = 0$ against $H_1: \beta_1 \neq 0$ by computing the following statistic: $$F^* = \frac{\frac{SSE(R)-SSE(F)}{df_R - df_F}}{\frac{SSE(F)}{df_F}}$$
+We reject $H_0$ for large values of $F^*$, which has an $F$ distribution with degrees of freedom $df_R - df_F$ and $df_F$, respectively. In other words, $F^* \sim F(df_R - df_F, df_F)$
+
+An immediate application of this approach is to the situation where there are repeat observations at the same values of $X$ (i.e. when there are multiple observed $Y$ values at the same $X$ value). Suppose that the full model is given by $$Y_{ij} = \mu_j + \epsilon_{ij}$$ where $i = 1, \dots, n_j$ and $j = 1, \dots, c$ and $\epsilon_{ij} \sum N(0, \sigma^2)$. The $\mu_{ij}$ values are unrestricted parameters when $X = X_j$. 
+
+
+
