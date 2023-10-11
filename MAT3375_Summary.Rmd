@@ -1242,3 +1242,68 @@ For example, we consider 2 parameters: $\beta_0$ and $\beta_1$ of a simple linea
 One strategy is to use the Bonferroni's procedure. Bonferroni's inequality states that for 2 events $\overline{A_1}$, $\overline{A_2}$, we have that $$P(\overline{A_1} \cap \overline{A_2}) = P(\overline{A_1}) + P(\overline{A_2}) - P(\overline{A_1} \cap \overline{A_2}) \le P(\overline{A_1}) + P(\overline{A_2})$$ and then we use DeMorgan's identity: $$P(A_1 \cap A_2) = 1 - P(\overline{A_1} \cup \overline{A_2}) \ge 1 - P(\overline{A_1}) - P(\overline{A_2})$$
 
 We define $A_1$ as the event that $\beta_0$ is contained in its $100(1-\alpha)\%$ confidence interval and $A_2$ is the event that $\beta_1$ is contained in its $100(1-\alpha)\%$ confidence interval. In this case, we have that $$P(\overline{A_1}) = P(\overline{A_2}) = \alpha$$ and hence, we get that $$P(A_1 \cap A_2) \ge 1 - P(A_1) - P(A_2) \ge 1 - 2\alpha$$
+
+Now the event $A_1 \cap A_2$ is the event that the intervals $b_0 \pm t(\alpha/2; n-2)\cdot s[b_0]$ and $b_1 \pm t(\alpha/2; n-2)\cdot s[b_1]$ simultaneously cover $\beta_0$ and $\beta_1$, respectively. The probability of such event is $1 - 2\alpha$. If we have $\alpha = 0.05$, then we get that $1 - 2\alpha = 0.90$. There would be a 0.90 probability that $\beta_0$ and $\beta_1$ simultaneously fall into the intervals. We would then be 90\% confident that the intervals simultaneously cover $\beta_0$ and $\beta_1$.
+
+On the other hand, if we want to be 95\% confident that the intervals simultaneously cover $\beta_0$ and $\beta_1$, then we need $1 - 2\alpha - 0.95$, which means we need $\alpha = 0.025$. Which means that we need to compute $t(0.025/2; n-2)$. Then we can construct the simultaneous confidence intervals with the t critical value calculated.
+
+In general, when there's $p$ parameters, the probability that they all fall in their respective confidence intervals is $1 - p\alpha$. If we want to be 95\% confident that the intervals simultaneously cover the parameters, then we need that $1 - p\alpha = 0.95$ and $\alpha = 0.05/p$. Then we need to compute $t(0.05/p; n-2)$, which may not be possible without a computer.
+
+## Example of Simultaneous Confidence Intervals
+
+We examine the rocket propellant data. We do this using R. 
+
+```{r}
+rocket = read.table("/System/Volumes/Data/MAT 3375/Summary Sheet/Rocket .txt", header=TRUE, sep='\t')
+names(rocket)
+y = rocket$Shear.strength
+x = rocket$Age.of.Propellant
+fit = lm(y~x)
+confint(fit, level = 1-0.05/2)
+```
+
+This way, we have computed simultaneous 95\% confidence intervals for $\beta_0$ and $\beta_1$. The intervals are $[2519.79245, 2735.85227]$ and $[-44.21747, -30.08971]$ for $\beta_0$ and $\beta_1$, respectively.
+
+Alternatively, we can compute the critical value for computing the confidence intervals
+
+```{r}
+qt(0.9875, nrow(rocket) - 2)
+```
+
+Then we can use this along with the summary data of the model to find the confidence interval.
+
+```{r}
+summary(fit)
+```
+
+Then the simultaneous confidence intervals are $2627.822 \pm 2.44(44.184)$ for $\beta_0$ and $-37.154 \pm 2.44(2.889)$ for $\beta_1$.
+
+# Model Adequacy Checking
+
+In the previous sections, we talked about simple and multiple linear regression. We recall that the assumptions that we make about the model are
+
+\begin{itemize}
+  \item $\epsilon_i$ are normally distributed
+  \item $E[\epsilon_i] = 0$ and $Var[\epsilon_i] = \sigma^2$
+  \item $\epsilon_i$ are independent
+\end{itemize}
+
+We now need to check the assumptions. If the assumptions are not met, then the analysis we do with linear models may not closely reflect the actual model. In this section, we talk about how to check for normality of the error terms and the constancy of variance.
+
+The basic tool that we use to check for model adequacy is analyzing the residuals $e_i = Y_i - \hat{Y_i}$.
+
+## Checking for Normality
+
+To check for normality, we can do this using several ways. We do this by examining the shape of the distribution of the data collected. There are 3 ways in which we can do this:
+
+\begin{itemize}
+  \item We can construct boxplots of residuals. Under the normality assumption, the boxplot should show a symmetric box around the median of approximately 0
+  \item We can construct a histogram of the residuals. It provides a graphical check on normality because if it shows a bell shape centered at 0 approximately, then we can assume a normal distribution
+  \item We can construct a quantile-quantile plot. This plot compares the quantiles of the residual data collected (sample quantiles) with the quantiles from a normal distribution. This is the plot of the ranked residuals against the expected value under normality. We let $e_{(k)}$ be the residual with rank $k$, and $E_k$ be the expected value of the residual with rank $k$ under normality. We have $E_k = \sqrt{MSE} \Phi^{-1}(\frac{k - 0.375}{n + 0.25})$ for $k = 1, ..., n$. We plot $e_{(k)}$ against $E_k$. Under normality, one would expect a straight line pattern in the plot.
+\end{itemize}
+
+## Checking for Constancy of Variance
+
+The other assumption we made about our models is that the variance of the random error terms remain constant. We need to use the residuals to verify this assumption.
+
+We note that the variance of the residuals is $Var[e_i] = \sigma^2(1 - h_{ii})$ and the covariance of residuals is $Cov(e_i, e_j) = \sigma^2(1 - h_{ij})$, where $h_{ij}$ is the element of the hat matrix on the ith row and jth column. If we look at the variance of each residual, we notice that the values are different. This means that the residuals have different variances. So, we want to look at the Studentized or standardized residuals $$e_i^* = \frac{e_i}{s\sqrt{1 - h_{ii}}}$$ where $s^2 = MSE$. The semi-studentized residuals are defined as $$\frac{e_i}{\sqrt{1-h_{ii}}}$$
