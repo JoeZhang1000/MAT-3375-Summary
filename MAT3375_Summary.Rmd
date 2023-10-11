@@ -1125,4 +1125,91 @@ Now, we have the reduced model $$Y_{ij} = \beta_0 + \beta_1X_j + \epsilon_{ij}$$
 
 which has error sum of squares equal to $$SSE(R) = \sum_{ij} (Y_{ij} - \hat{Y_{ij}})^2$$ where $\hat{Y_{ij}} = b_0 + b_1X_j$. The degrees of freedom are $df_R = (n-2)$
 
-Now, we can test the hypotheses $$H_0: E[Y] = \beta_0 + \beta_1X$$ $$H_1: E[Y] \neq \beta_0 + \beta_1X$$ by computing the ratio $$F^* = \frac{[\frac{SSE(R)-SSE(F)}{df_R - df_F}]}{[\frac{SSE(F)}{df_F}]}$$
+Now, we can test the hypotheses $$H_0: E[Y] = \beta_0 + \beta_1X$$ $$H_1: E[Y] \neq \beta_0 + \beta_1X$$ by computing the ratio $$F^* = \frac{[\frac{SSE(R)-SSE(F)}{df_R - df_F}]}{[\frac{SSE(F)}{df_F}]}$$ The test is on whether a linear model is justified at all. This is different from just testing that the slope is 0. The main purpose of this test is to see if we can use a linear model instead of a complex model.
+
+We can gain some insight into the components of the $F^*$ ratio. We have that $$(Y_{ij} - \hat{Y_{ij}}) = (Y_{ij} - \overline{Y_j}) - (\overline{Y_j} - \hat{Y_{ij}})$$ We then get the relationship $$\sum_{ij}(Y_{ij} - \hat{Y_{ij}})^2 = \sum_{ij} (Y_{ij} - \overline{Y_j})^2 + \sum_{ij} (\overline{Y_j} - \hat{Y_{ij}})^2$$
+
+The components are broken down as follows:
+
+\begin{itemize}
+  \item $SSE(R) = \sum_{ij} (Y_{ij} - \hat{Y_{ij}})^2$ is the error sum of squares for the reduced model
+  \item $SSPE = \sum_{ij} (Y_{ij} - \overline{Y_j})^2$ is the pure error sum of squares
+  \item $SSLF = \sum_{ij} (\overline{Y_j} - \hat{Y_{ij}})^2$ is the error sum of squares due to lack of fit which is independent of $i$
+\end{itemize}
+
+We also have that the the degrees of freedom of the pure error sum of squares is $df_{PE} = n-c$ and the degrees of freedom of the lack of fit sums of squares is $df_{LF} = c-2$. An ANOVA table summarizes the analysis:
+
+\begin{table}[!h]
+\centering
+\caption{ANOVA Table for Lack of Fit Test}
+\begin{tabular}{|c|c|c|c|c|c|}
+
+\hline
+Source & Sum of Squares (SS) & df & Mean Square (MS = SS/df) & F statistic & E[MS] \\
+\hline
+Regression & $SSR = \sum_{ij}(\hat{Y_{ij}} - \overline{Y})^2$ & $1$ & $MSR = SSR$ & $\frac{MSR}{MSE}$ & $\sigma^2 + \beta_1^2 \sum(X_i - \overline{X})^2$ \\
+\hline
+Error & $SSE(R) = \sum (Y_{ij} - \hat{Y_{ij}})^2$ & $n - 2$ & $MSE = \frac{SSE(R)}{n-2}$ & & $\sigma^2$\\
+\hline
+Lack of Fit & $SSLF = \sum_{ij}(\overline{Y_j} - \hat{Y_{ij}})^2$ & $c-2$ & $MSLF = \frac{SSLF}{c-2}$ & $F^* = \frac{MSLF}{MSPE}$ & $\sigma^2 + \frac{\sum n_i(\mu_i - \beta_0 - \beta_1X_i)^2}{c-2}$\\
+\hline
+Pure Error & $SSPE = \sum_{ij}(Y_{ij} - \overline{Y_j})^2$ & $n-c$& $MSPE = \frac{SSPE}{n-c}$& & \\
+\hline
+&&&&&\\
+\hline
+Total & $SSTO = \sum(Y_i - \overline{Y})^2$ & $n - 1$ & & &\\
+\hline
+  
+\end{tabular}
+\label{lyxtab2}
+\end{table}
+
+The $F^*$ ratio tests for lack of fit with a simple linear regression model. If there is no lack of fit, the the ratio should be closer to 1 since both the pure error sums of squares and the error sum of squares due to lack of fit are unbiased estimators of $\sigma^2$ under $H_0$. Otherwise, we would expect the ratio to be large.
+
+We can also extend this concept to multiple linear regression. We consider the case where we have 2 predictors.
+
+We define $$SSR(X_2|X_1) = SSE(X_1) -SSE(X_1, X_2)$$ to be the reduction in the error sum of squares when after $X_1$ is included, an additional variable $X_2$ is added to the model. We can rewrite the expression as $$SSR(X_2|X_1) = SSR(X_1, X_2) - SSR(X_1)$$
+
+Similarly, when we have 3 predictors, we have that $$SSR(X_1, X_2, X_3) = SSR(X_1) + SSR(X_2|X_1) + SSR(X_3|X_1, X_2)$$ This decomposition enables us to judge the effect an added variable has on the sum of squares due to regression. 
+
+We can use this process to test a full model with all predictors and a reduced model with only selected predictors by obtaining the error sum of squares of the full and reduced models.
+
+## Example: Delivery Time Data
+
+A soft drink bottler is interested in predicting the time required by the route driver to deliver the vending machines in an outlet. We let $Y$ be the delivery time, $X_1$ be the number of cases of product stocked, and $X_2$ be the distance walked by the route driver in feet. 
+
+We first want to create a scatterplot matrix of the data
+
+```{r}
+delivery = read.table("/System/Volumes/Data/MAT 3375/Summary Sheet/Delivery Time.txt", header =TRUE, sep='\t')
+names(delivery)
+plot(delivery)
+```
+Now, we want to fit a multiple linear regression model for the data.
+
+```{r}
+X_1 = delivery$Number.of.Cases
+X_2 = delivery$Distance
+Y = delivery$Delivery.Time
+model = lm(Y~X_1+X_2, data=delivery)
+model
+summary(model)
+```
+From the summary above, we find that the least squares multiple linear regression function is $\hat{Y} = 2.341231 + 1.615907X_1 + 0.014385X_2$. If we want to test for regression, we see that the $F$ statistic is 261.2 and the p-value is very small. This means that we can reject $H_0: \beta_1 = \beta_2 = 0$, which means that there is enough evidence to suggest that at least one of $X_1$ and $X_2$ have influence on $Y$. If we look at the t statistics, we have that we can reject the null hypotheses $H_0: \beta_0 = 0$, $H_0: \beta_1 = 0$, and $H_0: \beta_2 = 0$. This is because the t statistics are all statistically significant.
+
+We can also do an ANOVA test on the model
+
+```{r}
+anova(model)
+```
+We have found that the $F$ statistic to test $H_0: \beta_1 = 0$ is 506.619 and the $F$ statistic to test $H_0: \beta_2 = 0$ is 15.851, which are both significant. There is convincing evidence that both $X_1$ and $X_2$ have influence on $Y$.
+
+We can also conduct a test using the extra sum of squares principle. We're testing the full model $Y = \beta_0 + \beta_1X_1 + \beta_2X_2$ against the reduced model $Y = \beta_0 + \beta_1X_1$.
+
+```{r}
+Full = lm(Y~X_1+X_2, data=delivery)
+Reduced = lm(Y~X_1)
+anova(Reduced, Full)
+```
+We find that the $F$ statistic is 15.851, which is statistically significant. Therefore, we can reject the null hypothesis that $H_0: \beta_2 = 0$. This means that we cannot use the reduced model for this data.
+
