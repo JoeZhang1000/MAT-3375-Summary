@@ -1092,7 +1092,37 @@ We can use a more general approach to regression to test if we can fit a reduced
 To do this, we let the full model (F) be the model $Y = \beta_0 + \beta_1X + \epsilon$ and the reduced model (R) be the model $Y = \beta_0 + \epsilon$. We compute the error sum of squares for each model. We get that $SSE(F) = \sum (Y_i - \hat{Y_i})^2$ for the full model and $SSE(R) = \sum(Y_i - \hat{Y_i})^2$ for the reduced model. This way we can test $H_0: \beta_1 = 0$ against $H_1: \beta_1 \neq 0$ by computing the following statistic: $$F^* = \frac{\frac{SSE(R)-SSE(F)}{df_R - df_F}}{\frac{SSE(F)}{df_F}}$$
 We reject $H_0$ for large values of $F^*$, which has an $F$ distribution with degrees of freedom $df_R - df_F$ and $df_F$, respectively. In other words, $F^* \sim F(df_R - df_F, df_F)$
 
-An immediate application of this approach is to the situation where there are repeat observations at the same values of $X$ (i.e. when there are multiple observed $Y$ values at the same $X$ value). Suppose that the full model is given by $$Y_{ij} = \mu_j + \epsilon_{ij}$$ where $i = 1, \dots, n_j$ and $j = 1, \dots, c$ and $\epsilon_{ij} \sum N(0, \sigma^2)$. The $\mu_{ij}$ values are unrestricted parameters when $X = X_j$. 
+An immediate application of this approach is to the situation where there are repeat observations at the same values of $X$ (i.e. when there are multiple observed $Y$ values at the same $X$ value). Suppose that the full model is given by $$Y_{ij} = \mu_j + \epsilon_{ij}$$ where $i = 1, \dots, n_j$ and $j = 1, \dots, c$ and $\epsilon_{ij} \sum N(0, \sigma^2)$. The $\mu_{j}$ values are unrestricted parameters when $X = X_j$. To derive their least squares estimates, we want to minimize the following: $Q = \sum_{j=1}^{c}\sum_{i=1}^{n_j} \epsilon_{ij}^2 = \sum_{j=1}^{c}\sum_{i=1}^{n_j}[Y_{ij} - \mu_j]^2$. We take the derivative and we get
 
+\begin{equation*}
+\begin{split}
+  \frac{\partial Q}{\partial \mu_j}
+  &= \frac{\partial \sum_{i=1}^{n_j} (Y_{ij} - \mu_j)^2}{\partial \mu_j} \\
+  &= -2 \sum_{i=1}^{n_j}(Y_{ij} - \mu_j)
+\end{split}
+\end{equation*}
 
+We set the above equal to 0. Then we get that 
 
+\begin{equation*}
+\begin{split}
+  -2 \sum_{i=1}^{n_j} (Y_{ij} - \mu_j) = 0 \\
+  \sum_{i=1}^{n_j} Y_{ij} - \sum_{i=1}^{n_j} \mu_j = 0\\
+  n_j\mu_j = \sum_{i=1}^{n_j}Y_{ij} \\
+  \hat{\mu} = \frac{\sum_{i=1}^{n_j} Y_{ij}}{n_j}
+\end{split}
+\end{equation*}
+
+So we have that the least squares estimators of $\mu_j$ are $$\overline{Y_j} = \frac{\sum_{i=1}^{n_j} Y_{ij}}{n_j}$$
+
+Therefore, the error sum of squares for this full unrestricted model is $$SSE(F) = \sum_{ij} (Y_{ij} - \overline{Y_j})^2$$
+
+The corresponding degrees of freedom are $$df_F = \sum_{j=1}^{c} (n_j - 1) = n-c$$
+
+If all $n_j = 1$, then $df_F = 0$ and $SSE(F) = 0$, and the analysis cannot proceed any further.
+
+Now, we have the reduced model $$Y_{ij} = \beta_0 + \beta_1X_j + \epsilon_{ij}$$
+
+which has error sum of squares equal to $$SSE(R) = \sum_{ij} (Y_{ij} - \hat{Y_{ij}})^2$$ where $\hat{Y_{ij}} = b_0 + b_1X_j$. The degrees of freedom are $df_R = (n-2)$
+
+Now, we can test the hypotheses $$H_0: E[Y] = \beta_0 + \beta_1X$$ $$H_1: E[Y] \neq \beta_0 + \beta_1X$$ by computing the ratio $$F^* = \frac{[\frac{SSE(R)-SSE(F)}{df_R - df_F}]}{[\frac{SSE(F)}{df_F}]}$$
