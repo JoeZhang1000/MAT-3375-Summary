@@ -1213,3 +1213,32 @@ anova(Reduced, Full)
 ```
 We find that the $F$ statistic is 15.851, which is statistically significant. Therefore, we can reject the null hypothesis that $H_0: \beta_2 = 0$. This means that we cannot use the reduced model for this data.
 
+## Example: Bank Data
+
+We want to illustrate for testing for lack of fit. For this, we'll use the Bank data. We'll compare the reduced model $Y_{ij} = \beta_0 + \beta_1X_j + \epsilon_{ij}$ and the full model $Y_{ij} = \mu_j + \epsilon_{ij}$ for a data with repeat observation at the same predictor values. 
+
+```{r}
+#We first load the data
+bank = read.table("/System/Volumes/Data/MAT 3375/Summary Sheet/Bank Data.txt", header=TRUE, sep='\t')
+names(bank)
+
+#Now, we fit the reduced and full models for the data
+x = bank$Minimum.Deposit
+y = bank$Number.New.accounts
+
+reduced = lm(y~x)
+full = lm(y~0 + as.factor(x))
+anova(reduced, full)
+```
+
+The $F$ statistic is 14.801, which is statistically significant. Therefore, we reject the null hypothesis that $E[Y] = \beta_0 + \beta_1X$ and a linear model is not a good fit for the data.
+
+## Simultaneous Confidence Intervals
+
+We have learned to construct a confidence interval for one specific parameter (i.e. confidence intervals for $\beta_0$ and $\beta_1$ in a simple linear regression model). However, sometimes we want to calculate simultaneous or joint confidence intervals for the entire set of parameters. For example, we may want to construct simultaneous confidence intervals for all the coefficients in a linear regression model (i.e. simultaneous confidence intervals that contain both the intercept and slope in a simple linear regression model). However, the confidence level decreases as we include more parameters to estimate.
+
+For example, we consider 2 parameters: $\beta_0$ and $\beta_1$ of a simple linear regression model, and we want to construct simultaneous $100(1-\alpha/2)\%$ confidence intervals for the parameters. We can obtain a $100(1-\alpha/2)\%$ for each parameter. However, if we let $A_1$ be the event that $\beta_0$ is in its confidence interval and $A_2$ be the event that $\beta_1$ is in its confidence interval, then if we assume that $A_1$ and $A_2$ are independent, then we have that $$P(A_1 \cap A_2) = P(A_1)P(A_2)$$ Say if we have $P(A_1) = 0.95$ and $P(A_2) = 0.95$, then $P(A \cap B) = (0.95)^2 = 0.9025 < 0.95$. However, the events are never independent, so $P(A_1 \cap A_2)$ is even less.
+
+One strategy is to use the Bonferroni's procedure. Bonferroni's inequality states that for 2 events $\overline{A_1}$, $\overline{A_2}$, we have that $$P(\overline{A_1} \cap \overline{A_2}) = P(\overline{A_1}) + P(\overline{A_2}) - P(\overline{A_1} \cap \overline{A_2}) \le P(\overline{A_1}) + P(\overline{A_2})$$ and then we use DeMorgan's identity: $$P(A_1 \cap A_2) = 1 - P(\overline{A_1} \cup \overline{A_2}) \ge 1 - P(\overline{A_1}) - P(\overline{A_2})$$
+
+We define $A_1$ as the event that $\beta_0$ is contained in its $100(1-\alpha)\%$ confidence interval and $A_2$ is the event that $\beta_1$ is contained in its $100(1-\alpha)\%$ confidence interval. In this case, we have that $$P(\overline{A_1}) = P(\overline{A_2}) = \alpha$$ and hence, we get that $$P(A_1 \cap A_2) \ge 1 - P(A_1) - P(A_2) \ge 1 - 2\alpha$$
