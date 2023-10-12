@@ -1306,4 +1306,138 @@ To check for normality, we can do this using several ways. We do this by examini
 
 The other assumption we made about our models is that the variance of the random error terms remain constant. We need to use the residuals to verify this assumption.
 
-We note that the variance of the residuals is $Var[e_i] = \sigma^2(1 - h_{ii})$ and the covariance of residuals is $Cov(e_i, e_j) = \sigma^2(1 - h_{ij})$, where $h_{ij}$ is the element of the hat matrix on the ith row and jth column. If we look at the variance of each residual, we notice that the values are different. This means that the residuals have different variances. So, we want to look at the Studentized or standardized residuals $$e_i^* = \frac{e_i}{s\sqrt{1 - h_{ii}}}$$ where $s^2 = MSE$. The semi-studentized residuals are defined as $$\frac{e_i}{\sqrt{1-h_{ii}}}$$
+We note that the variance of the residuals is $Var[e_i] = \sigma^2(1 - h_{ii})$ and the covariance of residuals is $Cov(e_i, e_j) = \sigma^2(1 - h_{ij})$, where $h_{ij}$ is the element of the hat matrix on the ith row and jth column. If we look at the variance of each residual, we notice that the values are different. This means that the residuals have different variances. So, we want to look at the Studentized or standardized residuals $$e_i^* = \frac{e_i}{s\sqrt{1 - h_{ii}}}$$ where $s^2 = MSE$. The semi-studentized residuals are defined as $$\frac{e_i}{\sqrt{1-h_{ii}}}$$ which also has constant variance. 
+
+We can check for constancy of variance by making a plot of the Studentized residuals against the fitted values. If the plot shows a random distribution of the points, then we can assume that the variance of the error terms are constant. However, if we see a telescoping increasing or decreasing pattern among the points, then there is evidence of non-constancy of variance. Then the constancy of variance assumption would be violated.
+
+We can also construct a scale-location plot to examine the homogeneity of the variance of the residuals. This plots the square roots of the absolute values of the Studentized residuals vs. the fitted values.
+
+## Example of checking for model adequacy
+
+We look at the delivery time data. We let $X_1$ represent the delivery number of cases and $X_2$ represent the delivery distance, and we let $Y$ represent the delivery time. 
+
+```{r}
+X1 = delivery$Number.of.Cases
+X2 = delivery$Distance
+Y = delivery$Delivery.Time
+
+fit = lm(Y~X1+X2, data=delivery)
+par(mfrow=c(2,2))
+plot(fit)
+```
+
+From looking at the plots above, we have that the qq-plot follows a straight line pattern in the middle, but not so much on the sides. Therefore, there may be a problem with the normality assumption for this particular dataset. From looking at the residuals vs. fitted plot, we see that the points are randomly distributed on the plot. This means that we can assume constancy of variance in the dataset.
+
+# Remedial Measures and Transformations
+
+There are times when the assumptions for fitting and testing a linear model are violated, but we don't want to immediately discard the model. Instead, we can do some transformations to the response or predictor variables. This may help linearize the model and bring it in line with the assumptions made.
+
+## Variance Stabilizing Transformations
+
+When the assumption that the variance of the error terms is constant is not reasonable, we can then transform the data to make the assumption more reasonable. Below are some examples of transformations we apply to response variables from various distributions.
+
+### Poisson Distribution
+
+In the case that the response variable $Y$ follows a Poisson distribution, then its variance is equal to its mean. If $Y$ is distributed as a Poisson random variable with mean $\lambda$, then $\sqrt{Y}$ is distributed more nearly normally with variance approximately $\frac{1}{4}$ if $\lambda$ is large. In this case, we can regress $\sqrt{Y}$ against $X$ and fit a linear regression model.
+
+### Binomial Distribution
+
+In the case that the response variable $Y$ follows a Binomial distribution $B(n, p)$, we have that its mean is $E[Y] = np$. We use the transformation $$\sin^{-1} \sqrt{\frac{Y+c}{n+2c}}$$ where the optimal value of $c$ is $\frac{3}{8}$ if $E[Y]$ and $n-E[Y]$ are large. The variance is approximately $\frac{1}{4}(n+\frac{1}{2})^{-1}$.
+
+## Transformations to Linearize the Model
+
+Sometimes when we plot $Y$ against $X$, the plot does not look linear. Then we can apply transformations to the response variable $Y$ to make the plot look more linear. Below are some examples:
+
+### Exponential Model
+
+If the true model is $$Y = \beta_0 e^{\beta_1X}\epsilon$$ then we can transform it by taking the logarithms. Here is what the model would look like: $$\ln(Y) = \ln(\beta_0)+\beta_1X+\ln(\epsilon)$$ We still have to make the usual assumptions for a linear model and then verify them.
+
+### Reciprocal Model
+
+The model $Y = \beta_0 + \beta_1X^{-1} + \epsilon$ can be linearized using the trainsformation $X^* = X^{-1}$. This is a transformation on the predictor variable.
+
+The model $\frac{1}{Y} = \beta_0 + \beta_1X + \epsilon$ can be linearized using the reciprocal transformation $Y^* = Y^{-1}$. This is a transformation of the response variable.
+
+The model $Y = \frac{X}{\beta_0 + \beta_1X}$ can be linearized using the reciprocal transformation in 2 steps. First, we use $Y^* = Y^{-1}$ and $X^* = X^{-1}$. Then we have
+
+\begin{equation*}
+\begin{split}
+  Y
+  &= \frac{X}{\beta_0 + \beta_1X} \\
+  &= \frac{1}{\beta_0X^{-1} + \beta_1} 
+\end{split} 
+\end{equation*}
+
+Consequently, we get that $Y^{-1} = \beta_0X^{-1} + \beta_1$. Then we obtain $Y^* = \beta_1 + \beta_0X^*$.
+
+## Box-Cox Transformations
+
+The data may not appear to be normally distributed sometimes. Then Box and Cox suggested a power transformation of the type
+
+$$
+  Y^{(\lambda )} = \left \{
+  \begin{array}{ll}
+    \frac{Y^{\lambda} - 1}{\lambda \dot{Y}^{\lambda - 1}} \, \quad \lambda \neq 0 \\
+    \dot{Y}\ln(Y)  \quad \lambda = 0 \,
+  \end{array}
+  \right.
+$$
+where $$\dot{Y} = \ln^{-1}[\frac{\sum \ln(Y_i)}{n}]$$
+
+The value of $\lambda$ can be estimated using trial and error. We fit a model for $Y^{(\lambda)}$ for various values of $\lambda$ and selecting the one which mimimizes the error sum of squares from a graphical plot. We can also construct a confidence interval for $\lambda$. Using R, we can estimate $\lambda$ using maximum likelihood.
+
+The theory behind the transformation is as follows:
+
+The original model was assumed to be $\boldsymbol{Y}\sim N_n(\boldsymbol{X\beta}, \sigma^2\boldsymbol{I})$
+
+Then the transformed model is $Y^{(\lambda)}$ and has likelihood function given by $$\frac{1}{(2\pi)^{n/2}\sigma^n} exp(-\frac{(\boldsymbol{y}^{(\lambda)} - \boldsymbol{X\beta})^T(\boldsymbol{y}^{(\lambda)} - \boldsymbol{X\beta})}{2\sigma^2}) J(\lambda; \boldsymbol{y})$$ with parameters $\boldsymbol{\beta}$ and the Jacobian for the transformation $$J(\lambda; \boldsymbol{y}) = \prod_{i=1}^{n} |\frac{\partial y_i^{(\lambda)}}{\partial y_i}|$$
+The maximum likelihood estimator of the variance is given by $$\hat{\sigma^2} = \frac{\boldsymbol{(Y^{(\lambda)})^T}[\boldsymbol{I - X(X^TX)^{-1}X^T}] \boldsymbol{Y^{(\lambda)}}}{n}$$
+
+The maximum log likelihood for fixed $\lambda$ is $$L_{max} = -\frac{n}{2}\log(\hat{\sigma^2}) + \log(J(\lambda; \boldsymbol{y})) = -\frac{n}{2}\log(\hat{\sigma^2}) + (\lambda - 1)\sum \log(y_i)$$
+
+We then plot $L_{max}(\lambda)$ against $\lambda$ to find the value of $\lambda$ which yields the maximum.
+
+## Weighted Least Squares
+
+This approach is for when the constancy of variance assumption is not reasonable. We assume that $Var[e_i] = \sigma_i^2$. Instead of minimizing the sum of the squared errors, we can minimize the sum of the weighted squared errors $$\sum w_ie_i^2$$ where the weights satisfy $$Var[\sqrt{w_i}e_i] = \sigma^2$$. In other words, we're to minimize $$\sum w_i[Y_i - \beta_0 - \beta_1X_i]$$ with respect to $\beta_0$ and $\beta_1$.
+
+### Estimation and Fitting
+
+With ordinary least squares regression, we have that the linear regression model is $$\boldsymbol{Y} = \boldsymbol{X\beta} + \boldsymbol{\epsilon}$$
+
+We define the matrix $\boldsymbol{W}$ as the matrix of weights $$\boldsymbol{W} = \begin{pmatrix} w_1 & 0 & \dots & 0 \\ 0 & w_2 & \dots & 0 \\ \dots & \dots & \dots & \dots \\ 0 & 0 & \dots & w_n \end{pmatrix}$$
+
+Then the original model goes to $$\boldsymbol{W^{1/2}Y} = \boldsymbol{W^{1/2}X\beta} + \boldsymbol{W^{1/2}\epsilon}$$, where $$\boldsymbol{W}^{1/2} = \begin{pmatrix} w_1^{1/2} & 0 & \dots & 0 \\ 0 & w_2^{1/2} & \dots & 0 \\ \dots & \dots & \dots & \dots \\ 0 & 0 & \dots & w_n^{1/2} \end{pmatrix}$$
+
+Then we get that the least squares estimate for $\boldsymbol{\beta}$ is 
+
+\begin{equation*}
+\begin{split}
+  \boldsymbol{b_W} 
+  &= \boldsymbol{((W^{1/2}X)^T(W^{1/2}X))^{-1}(W^{1/2}X)(W^{1/2}Y)} \\
+  &= \boldsymbol{(X^TW^{1/2}W^{1/2}X)^{-1}X^TW^{1/2}W^{1/2}Y} \\
+  &= \boldsymbol{(X^TWX)^{-1}X^TWY}
+\end{split}
+\end{equation*}
+
+The MSE becomes
+
+\begin{equation*}
+\begin{split}
+  MSE_{W}
+  &= \frac{\sum w_i(Y_i - \hat{Y_i})^2}{n - p} \\
+  &= \frac{\sum w_i(e_i)^2}{n - p}
+\end{split}
+\end{equation*}
+
+## Choosing weights
+
+We want to now choose the appropriate weights for weighted least squares. There are many ways we can do this. For example, we can take $w_i = \sqrt{X_i}$ or $w_i = \sqrt{Y_i}$. However, there is one way that we can commonly use. We first divide up the data into clusters using the $X$ variable. Then, we estimate the sample variances of the $Y_i$ for each group, denote them as $s_i^2$. Then we compute the averages of the $X_i$ values in each cluster. We fit a regression model of the variances of $Y_i$ against the averages of $X_i$ in each cluster. We then estimate the variances by substituting all the $X_i$ values into the equation of the regression function of the variances against the averages. The weights are the inverses of the estimated variances.
+
+For example, we use the turkey data. We group the data into clusters, then we obtain the averages of the $X_i$ in each group and the variances of $Y_i$ in each group. We obtain the regression function $s^2 = 1.5329 - 0.7334\overline{X} + 0.0883\overline{X}^2$. Then we substitute the individual $X_i$ in the data to find $\hat{s_i^2} = 1.5329 - 0.7334X_i + 0.0883X_i^2$. Then we obtain the weights as $\frac{1}{s_i^2}$. With the usual linear regression model, we get that the regression function is $$Y = -0.579 + 1.14X$$ and the weighted regression is $$Y = -0.892 + 1.16X$$
+
+## Breusch-Pagan Test
+
+The Breusch-Pagan Test is used for checking for constancy of variance. It assumes the model
+
+
