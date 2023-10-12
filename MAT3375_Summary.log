@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.11)  11 OCT 2023 22:48
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.11)  11 OCT 2023 23:43
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -569,18 +569,18 @@ L3 programming layer <2023-08-29>
 LaTeX Warning: There were multiply-defined labels.
 
 Package rerunfilecheck Info: File `MAT3375_Summary.out' has not changed.
-(rerunfilecheck)             Checksum: EEB2428DDCD292C7E3F0F62AAFE81DE8;9702.
+(rerunfilecheck)             Checksum: 7E3D421B26EB9E084F0D433FB645F6CB;9712.
  ) 
 Here is how much of TeX's memory you used:
  11957 strings out of 476888
- 185763 string characters out of 5807963
+ 185773 string characters out of 5807963
  1950791 words of memory out of 5000000
  32886 multiletter control sequences out of 15000+600000
  622505 words of font info for 91 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  75i,21n,79p,623b,582s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbsy10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbsy7.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx7.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi5.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmib10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmib5.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmib7.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr5.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
-Output written on MAT3375_Summary.pdf (38 pages, 532423 bytes).
+Output written on MAT3375_Summary.pdf (38 pages, 535521 bytes).
 PDF statistics:
  634 PDF objects out of 1000 (max. 8388607)
  530 compressed objects within 6 object streams

@@ -1430,7 +1430,7 @@ The MSE becomes
 \end{split}
 \end{equation*}
 
-## Choosing weights
+### Choosing weights
 
 We want to now choose the appropriate weights for weighted least squares. There are many ways we can do this. For example, we can take $w_i = \sqrt{X_i}$ or $w_i = \sqrt{Y_i}$. However, there is one way that we can commonly use. We first divide up the data into clusters using the $X$ variable. Then, we estimate the sample variances of the $Y_i$ for each group, denote them as $s_i^2$. Then we compute the averages of the $X_i$ values in each cluster. We fit a regression model of the variances of $Y_i$ against the averages of $X_i$ in each cluster. We then estimate the variances by substituting all the $X_i$ values into the equation of the regression function of the variances against the averages. The weights are the inverses of the estimated variances.
 
@@ -1438,6 +1438,20 @@ For example, we use the turkey data. We group the data into clusters, then we ob
 
 ## Breusch-Pagan Test
 
-The Breusch-Pagan Test is used for checking for constancy of variance. It assumes the model
+The Breusch-Pagan Test is used for checking for constancy of variance. It assumes the model $$\log(\sigma_i^2) = \gamma_0 + \gamma_1X_i$$. We want to test the hypothesis $H_0: \gamma_1 = 0$. To do this, we regress the squared residuals $e_i^2$ against the predictors $X_i$. Then we can calculate the regression sums of squares of the model $SSR^*$. Let $SSE$ represent the error sum of squares when we fit a model for $Y$ against $X$. The test statistic is then $$\chi^2_{BP} = \frac{\frac{SSR^*}{2}}{\frac{SSE}{n}} \sim \chi^2(1)$$ We reject $H_0$ for large values of the test statistic.
 
+We can also use R to do the test. For the purpose, we use the Turkey data. Then we get that 
 
+```{r, include=FALSE}
+library(lmtest)
+```
+
+```{r}
+turkey = read.table("/System/Volumes/Data/MAT 3375/Summary Sheet/Turkey data.txt", header=TRUE , sep='\t')
+names(turkey)
+y <- turkey$Weight
+x <- turkey$Age
+fit <- lm(y~x)
+bptest(fit)
+```
+We obtain a test statistic of 2.5466 and a p-value of 0.11. This means that we fail to reject $H_0$. We can assume that the variance of error terms are constant.
