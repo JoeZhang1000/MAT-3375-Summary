@@ -1455,3 +1455,93 @@ fit <- lm(y~x)
 bptest(fit)
 ```
 We obtain a test statistic of 2.5466 and a p-value of 0.11. This means that we fail to reject $H_0$. We can assume that the variance of error terms are constant.
+
+## Example: Electricity Data
+
+In this example, we look at model adequacy checking and the Box-Cox transformation
+
+We want to analyze the electricity data. We first load the data
+
+```{r}
+electric = read.table("/System/Volumes/Data/MAT 3375/Summary Sheet/Electric Utility Data.txt", header=TRUE, sep='\t')
+names(electric)
+```
+
+Now, we fit a linear regression model and look at the summary and ANOVA table
+
+```{r}
+y = electric$Demand.Y
+x = electric$Usage.X
+
+model = lm(y~x, data=electric)
+anova(model)
+summary(model)
+```
+
+From looking at the summary table, we find that a simple linear regression model for this data is $\hat{Y} = -0.6427556 + 0.0035502X$, where $Y$ is the electric demand and $X$ is the electric usage. From looking at both the t statistics and the ANOVA table, we can reject the null hypothesis $H_0: \beta_1 = 0$. There is evidence of relationship between electric usage and demand.
+
+Now, we want to actually verify that the model we fitted actually make sense. We can now do the model adequacy checking. We first create a histogram of the residuals and a normal curve.
+
+```{r, out.width="50%"}
+library(MASS)
+sresid = studres(model)
+hist(sresid, freq=FALSE)
+smodel=seq(min(sresid),max(sresid),length=25)
+ymodel=dnorm(smodel)
+lines(smodel, ymodel)
+curve(dnorm(x, mean(x), sd(x)))
+```
+If we look at the histogram of the residuals and the normal curve, we see that the residuals are approximately normally distributed with mean 0. This means that we can assume that the random error terms follow a normal distribution.
+
+Usually the Box-Cox transformation is done on data that doesn't seem normal, but we can still try to find a value for $\lambda$ for Box-Cox transformation.
+
+```{r}
+b=boxcox(model)
+b
+```
+From the graph above, we find that the optimal value for $\lambda$ is between 0.5 and 1. We can find the actual value using the following command:
+
+```{r}
+b$x[which.max(b$y)]
+```
+
+Therefore, the optimal value for $\lambda$ for the Box-Cox transformation is 0.5454545.
+
+Now, we create diagnostic plots for the data
+
+```{r}
+par(mfrow=c(2,2))
+plot(model)
+```
+
+From looking at the normal probability plot (qq plot), we find that the normality assumption is reasonable. However, from looking at the scale-location plot, there seems to be a pattern among the points. This means that there may be a problem with the constancy of variance assumption. 
+
+We try a transformation by taking the square root of the response variable and regressing it against the predictor.
+
+```{r}
+model1 = lm(sqrt(y)~x, data=electric)
+summary(model1)
+anova(model1)
+
+```
+
+From the summary and ANOVA table above, we find that the regression model is $\sqrt{\hat{Y}} = 0.06212411 + 0.0009231X$. The t statistics and the ANOVA table all suggest that we can reject $H_0: \beta_1 = 0$. This means that there is significant evidence that there is a relationship between $\sqrt{Y}$ and $X$ and hence, there is a relationship between $Y$ and $X$.
+
+We now create the diagnostic plots and see if there is an improvement.
+
+```{r}
+par(mfrow=c(2,2))
+plot(model1)
+```
+
+We see that the residual plot and the scale-location plots now show a more random pattern and the normal qq plot still follows a straight-line pattern. Therefore, the transformation does improve the model.
+
+Now, we want to show the Breusch-Pagan test. We do this using the following command:
+
+```{r}
+library(lmtest)
+bptest(model)
+bptest(model1)
+```
+
+From looking at the Breusch-Pagan results, the original model has a p-value of 0.04261, which means that we reject the null hypothesis that there is no relationship between the variance of the error terms and the predictor. Therefore, there is convincing evidence to suggest that the variance of the error terms is not constant. The transformed model has a p-value of 0.3512, which means that we fail to reject the null hypothesis. Therefore, we can assume that the random error terms have constant variance.

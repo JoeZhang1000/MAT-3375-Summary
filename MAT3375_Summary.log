@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.11)  11 OCT 2023 23:43
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (TeX Live 2023) (preloaded format=pdflatex 2023.10.11)  12 OCT 2023 22:32
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -508,7 +508,7 @@ LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 5
 (/Users/joezhang/Library/TinyTeX/texmf-dist/tex/latex/lm/ts1lmtt.fd
 File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) [7]
-<MAT3375_Summary_files/figure-latex/unnamed-chunk-3-1.pdf, id=271, 469.755pt x 325.215pt>
+<MAT3375_Summary_files/figure-latex/unnamed-chunk-3-1.pdf, id=275, 469.755pt x 325.215pt>
 File: MAT3375_Summary_files/figure-latex/unnamed-chunk-3-1.pdf Graphic file (type pdf)
 <use MAT3375_Summary_files/figure-latex/unnamed-chunk-3-1.pdf>
 Package pdftex.def Info: MAT3375_Summary_files/figure-latex/unnamed-chunk-3-1.pdf  used on input line 622.
@@ -518,7 +518,7 @@ Overfull \hbox (112.99329pt too wide) in paragraph at lines 632--632
 []\T1/lmtt/m/n/10 ## Warning in predict.lm(fit, interval = "prediction"): predictions on current data refer to _future_ responses[] 
  []
 
-<MAT3375_Summary_files/figure-latex/unnamed-chunk-3-2.pdf, id=272, 469.755pt x 325.215pt>
+<MAT3375_Summary_files/figure-latex/unnamed-chunk-3-2.pdf, id=276, 469.755pt x 325.215pt>
 File: MAT3375_Summary_files/figure-latex/unnamed-chunk-3-2.pdf Graphic file (type pdf)
 <use MAT3375_Summary_files/figure-latex/unnamed-chunk-3-2.pdf>
 Package pdftex.def Info: MAT3375_Summary_files/figure-latex/unnamed-chunk-3-2.pdf  used on input line 649.
@@ -544,7 +544,7 @@ Overfull \hbox (67.04529pt too wide) in paragraph at lines 1854--1874
  []
 
 [27]
-<MAT3375_Summary_files/figure-latex/unnamed-chunk-14-1.pdf, id=407, 469.755pt x 325.215pt>
+<MAT3375_Summary_files/figure-latex/unnamed-chunk-14-1.pdf, id=411, 469.755pt x 325.215pt>
 File: MAT3375_Summary_files/figure-latex/unnamed-chunk-14-1.pdf Graphic file (type pdf)
 <use MAT3375_Summary_files/figure-latex/unnamed-chunk-14-1.pdf>
 Package pdftex.def Info: MAT3375_Summary_files/figure-latex/unnamed-chunk-14-1.pdf  used on input line 1927.
@@ -555,12 +555,41 @@ Underfull \hbox (badness 10000) in paragraph at lines 1927--1929
  []
 
 [28 <./MAT3375_Summary_files/figure-latex/unnamed-chunk-14-1.pdf>] [29] [30] [31] [32] [33]
-<MAT3375_Summary_files/figure-latex/unnamed-chunk-22-1.pdf, id=447, 469.755pt x 325.215pt>
+<MAT3375_Summary_files/figure-latex/unnamed-chunk-22-1.pdf, id=451, 469.755pt x 325.215pt>
 File: MAT3375_Summary_files/figure-latex/unnamed-chunk-22-1.pdf Graphic file (type pdf)
 <use MAT3375_Summary_files/figure-latex/unnamed-chunk-22-1.pdf>
 Package pdftex.def Info: MAT3375_Summary_files/figure-latex/unnamed-chunk-22-1.pdf  used on input line 2327.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
-[34 <./MAT3375_Summary_files/figure-latex/unnamed-chunk-22-1.pdf>] [35] [36] [37] [38] (./MAT3375_Summary.aux)
+[34 <./MAT3375_Summary_files/figure-latex/unnamed-chunk-22-1.pdf>] [35] [36] [37] [38]
+<MAT3375_Summary_files/figure-latex/unnamed-chunk-27-1.pdf, id=492, 469.755pt x 325.215pt>
+File: MAT3375_Summary_files/figure-latex/unnamed-chunk-27-1.pdf Graphic file (type pdf)
+<use MAT3375_Summary_files/figure-latex/unnamed-chunk-27-1.pdf>
+Package pdftex.def Info: MAT3375_Summary_files/figure-latex/unnamed-chunk-27-1.pdf  used on input line 2690.
+(pdftex.def)             Requested size: 234.87692pt x 162.6071pt.
+[39]
+<MAT3375_Summary_files/figure-latex/unnamed-chunk-27-2.pdf, id=497, 469.755pt x 325.215pt>
+File: MAT3375_Summary_files/figure-latex/unnamed-chunk-27-2.pdf Graphic file (type pdf)
+<use MAT3375_Summary_files/figure-latex/unnamed-chunk-27-2.pdf>
+Package pdftex.def Info: MAT3375_Summary_files/figure-latex/unnamed-chunk-27-2.pdf  used on input line 2698.
+(pdftex.def)             Requested size: 234.87692pt x 162.6071pt.
+<MAT3375_Summary_files/figure-latex/unnamed-chunk-28-1.pdf, id=498, 469.755pt x 325.215pt>
+File: MAT3375_Summary_files/figure-latex/unnamed-chunk-28-1.pdf Graphic file (type pdf)
+<use MAT3375_Summary_files/figure-latex/unnamed-chunk-28-1.pdf>
+Package pdftex.def Info: MAT3375_Summary_files/figure-latex/unnamed-chunk-28-1.pdf  used on input line 2714.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+[40 <./MAT3375_Summary_files/figure-latex/unnamed-chunk-27-1.pdf> <./MAT3375_Summary_files/figure-latex/unnamed-chunk-27-2.pdf>] [41 <./MAT3375_Summary_files/figure-latex/unnamed-chunk-28-1.pdf>]
+<MAT3375_Summary_files/figure-latex/unnamed-chunk-30-1.pdf, id=524, 469.755pt x 325.215pt>
+File: MAT3375_Summary_files/figure-latex/unnamed-chunk-30-1.pdf Graphic file (type pdf)
+<use MAT3375_Summary_files/figure-latex/unnamed-chunk-30-1.pdf>
+Package pdftex.def Info: MAT3375_Summary_files/figure-latex/unnamed-chunk-30-1.pdf  used on input line 2788.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+[42 <./MAT3375_Summary_files/figure-latex/unnamed-chunk-30-1.pdf>]
+<MAT3375_Summary_files/figure-latex/unnamed-chunk-32-1.pdf, id=534, 469.755pt x 325.215pt>
+File: MAT3375_Summary_files/figure-latex/unnamed-chunk-32-1.pdf Graphic file (type pdf)
+<use MAT3375_Summary_files/figure-latex/unnamed-chunk-32-1.pdf>
+Package pdftex.def Info: MAT3375_Summary_files/figure-latex/unnamed-chunk-32-1.pdf  used on input line 2860.
+(pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
+[43] [44 <./MAT3375_Summary_files/figure-latex/unnamed-chunk-32-1.pdf>] (./MAT3375_Summary.aux)
  ***********
 LaTeX2e <2023-06-01> patch level 1
 L3 programming layer <2023-08-29>
@@ -569,21 +598,21 @@ L3 programming layer <2023-08-29>
 LaTeX Warning: There were multiply-defined labels.
 
 Package rerunfilecheck Info: File `MAT3375_Summary.out' has not changed.
-(rerunfilecheck)             Checksum: 7E3D421B26EB9E084F0D433FB645F6CB;9712.
+(rerunfilecheck)             Checksum: 6DA4D872AD886708FFB7FAD8E23B6B9C;9901.
  ) 
 Here is how much of TeX's memory you used:
- 11957 strings out of 476888
- 185773 string characters out of 5807963
+ 12006 strings out of 476888
+ 188486 string characters out of 5807963
  1950791 words of memory out of 5000000
- 32886 multiletter control sequences out of 15000+600000
+ 32927 multiletter control sequences out of 15000+600000
  622505 words of font info for 91 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  75i,21n,79p,623b,582s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbsy10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbsy7.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmbx7.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmex10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi5.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmi7.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmib10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmib5.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmmib7.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr12.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr17.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr5.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmr7.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy5.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmsy7.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></Users/joezhang/Library/TinyTeX/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
-Output written on MAT3375_Summary.pdf (38 pages, 535521 bytes).
+Output written on MAT3375_Summary.pdf (44 pages, 598513 bytes).
 PDF statistics:
- 634 PDF objects out of 1000 (max. 8388607)
- 530 compressed objects within 6 object streams
- 153 named destinations out of 1000 (max. 500000)
- 421 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 697 PDF objects out of 1000 (max. 8388607)
+ 577 compressed objects within 6 object streams
+ 161 named destinations out of 1000 (max. 500000)
+ 454 words of extra memory for PDF output out of 10000 (max. 10000000)
 
