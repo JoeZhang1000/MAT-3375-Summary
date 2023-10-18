@@ -1245,9 +1245,9 @@ We define $A_1$ as the event that $\beta_0$ is contained in its $100(1-\alpha)\%
 
 Now the event $A_1 \cap A_2$ is the event that the intervals $b_0 \pm t(\alpha/2; n-2)\cdot s[b_0]$ and $b_1 \pm t(\alpha/2; n-2)\cdot s[b_1]$ simultaneously cover $\beta_0$ and $\beta_1$, respectively. The probability of such event is $1 - 2\alpha$. If we have $\alpha = 0.05$, then we get that $1 - 2\alpha = 0.90$. There would be a 0.90 probability that $\beta_0$ and $\beta_1$ simultaneously fall into the intervals. We would then be 90\% confident that the intervals simultaneously cover $\beta_0$ and $\beta_1$.
 
-On the other hand, if we want to be 95\% confident that the intervals simultaneously cover $\beta_0$ and $\beta_1$, then we need $1 - 2\alpha - 0.95$, which means we need $\alpha = 0.025$. Which means that we need to compute $t(0.025/2; n-2)$. Then we can construct the simultaneous confidence intervals with the t critical value calculated.
+On the other hand, if we want to be 95\% confident that the intervals simultaneously cover $\beta_0$ and $\beta_1$, then we need $1 - 2\alpha = 0.95$, which means we need $\alpha = 0.025$. Which means that we need to compute $t(0.025/2; n-2)$. Then we can construct the simultaneous confidence intervals with the t critical value calculated.
 
-In general, when there's $p$ parameters, the probability that they all fall in their respective confidence intervals is $1 - p\alpha$. If we want to be 95\% confident that the intervals simultaneously cover the parameters, then we need that $1 - p\alpha = 0.95$ and $\alpha = 0.05/p$. Then we need to compute $t(0.05/p; n-2)$, which may not be possible without a computer.
+In general, when there's $p$ parameters, the probability that they all fall in their respective confidence intervals is $1 - p\alpha$. If we want to be 95\% confident that the intervals simultaneously cover the parameters, then we need that $1 - p\alpha = 0.95$ and $\alpha = 0.05/p$. Then we need to compute $t(0.05/2p; n-p)$, which may not be possible without a computer.
 
 ## Example of Simultaneous Confidence Intervals
 
