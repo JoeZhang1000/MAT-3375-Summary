@@ -547,7 +547,7 @@ Then we get that
   \frac{(Y^* - \hat{Y}^*) - 0}{s[Y^* - \hat{Y}^*]} \sim t_{n-2}
 \end{equation*}
 
-Then we can construct a prediction interval for $Y^*$. The prediction interval is $\hat{Y}^* \pm s(Y^* - \hat{Y}^*)$
+Then we can construct a prediction interval for $Y^*$. The prediction interval is $\hat{Y}^* \pm t_{\alpha/2; n-2}s(Y^* - \hat{Y}^*)$
 
 ## Example: Airfreight Data
 
@@ -1545,3 +1545,144 @@ bptest(model1)
 ```
 
 From looking at the Breusch-Pagan results, the original model has a p-value of 0.04261, which means that we reject the null hypothesis that there is no relationship between the variance of the error terms and the predictor. Therefore, there is convincing evidence to suggest that the variance of the error terms is not constant. The transformed model has a p-value of 0.3512, which means that we fail to reject the null hypothesis. Therefore, we can assume that the random error terms have constant variance.
+
+# Regression Diagnostics for Leverage and Measures of Influence
+
+## Leverages
+
+There are times when a single observation may influence the results of a regression analysis. Hence, the detection of such influential observations is important. For this purpose, the hat matrix plays a very important role.
+
+We begin with the minimized sum of squares:
+
+\begin{equation*}
+\begin{split}
+  R(\boldsymbol{b})
+  &= (\boldsymbol{Y - Xb})^T(\boldsymbol{Y - Xb}) \\
+  &= \boldsymbol{Y^TY - Y^TX(X^TX)^{-1}X^TY} \\
+  &= \boldsymbol{Y^T(I - X(X^TX)^{-1}X^T)Y} \\
+  &= \boldsymbol{Y^T(I-H)Y}
+\end{split}
+\end{equation*}
+
+where $\boldsymbol{H} = \boldsymbol{X(X^TX)^{-1}X^T}$ is the hat matrix.
+
+If we let $\boldsymbol{x_i}^T$ be the i-th row of $X$. Then the i-th diagonal of $\boldsymbol{H}$ is for $i = 1, ..., n$ $$h_{ii} = \boldsymbol{x_i}^T(\boldsymbol{X^TX})^{-1}\boldsymbol{x_i}$$
+
+In the case of simple linear regression with $p = 2$, we have $\boldsymbol{x_i}^T = [1, X_i]$. Then we get
+
+\begin{equation*}
+  \begin{split}
+    h_{ii}
+    &= \frac{\boldsymbol{x_i}^T \begin{pmatrix} \sum X_j^2 & -\sum X_j \\ -\sum X_j & n \end{pmatrix} \boldsymbol{x_i}}{n\sum X_j^2 - (\sum X_j)^2} \\
+    &= \frac{\sum X_j^2 - 2X_i\sum X_j + nX_i^2}{n \sum X_j^2 - (\sum X_j)^2} \\
+    &= \frac{\sum X_j^2 - n\overline{X}^2 + n\overline{X}^2 - 2nX_i\overline{X} + nX_i^2}{n\sum X_j^2 - (\sum X_j)^2} \\
+    &= \frac{\sum(X_j - \overline{X})^2 + n\overline{X}^2 + 2nX_i\overline{X} + nX_i^2}{n \sum (X_j - \overline{X})^2} \\
+    &= \frac{\sum (X_j - \overline{X})^2 + n(X_i - \overline{X})^2}{n \sum (X_j - \overline{X})^2} \\
+    &= \frac{1}{n} + \frac{(X_i - \overline{X})^2}{\sum (X_j - \overline{X})^2}
+  \end{split}
+\end{equation*}
+
+The quantity $h_{ii}$ is called the leverage of the i-th observation.
+
+A further insight is gained by writing the mean $\overline{X}$ in terms of the mean $\overline{X}_{(i)}$ when the i-th observation is deleted. We can show $$\overline{X} = \frac{\sum X_j}{n} = \frac{X_i + \sum_{j \neq i} X_j}{n} = \frac{X_i + (n-1)\overline{X}_{(i)}}{n}$$ so that $$X_i - \overline{X} = X_i - \frac{1}{n}(X_i + (n-1) \overline{X}_{(i)}) = \frac{n-1}{n}(X_i - \overline{X}_{(i)})$$
+
+Hence, we get $$h_{ii} = \frac{1}{n} + \frac{(X_i - \overline{X})^2}{\sum (X_j - \overline{X})^2} = \frac{1}{n} + (\frac{n-1}{n})^2 \frac{(X_i - \overline{X}_{(i)})^2}{\sum (X_j - \overline{X})^2}$$ This shows that the leverage of the i-th observation will be large if $X_i$ is far from the mean of the other observations.
+
+The leverage can be used to flag influential observations. This follows from the fact that 
+
+\begin{equation*}
+  \begin{split}
+  Trace[\boldsymbol{H}]
+  &= Tr[\boldsymbol{X(X^TX)^{-1}X^T}] \\
+  &= Tr[\boldsymbol{(X^TX)^{-1}}X^TX] \\
+  &= Tr[\boldsymbol{I_p}] \\
+  &= p
+  \end{split}
+\end{equation*}
+
+Hence, the average $\frac{\sum h_ii}{n} = \frac{p}{n}$
+
+Consequently, observations with a value of the leverage greater than twice the average should be flagged. (i.e. $h_{ii} > 2(\frac{p}{n})$).
+
+## DFFITS
+
+A useful measure of the influence that case $i$ has on the fitted value $\hat{Y}$ is given by $$DFFITS_i = \frac{\hat{Y_i} - \hat{Y_i}_{(i)}}{\sqrt{MSE_{(i)} h_{ii}}} = t_i(\frac{h_{ii}}{1 - h_{ii}})^{1/2}$$ where $$t_i = e_i(\frac{n-p-1}{SSE(1-h_{ii}) - e_i^2})^{1/2}$$ where we have $\hat{Y_i}$ is the fitted value of $Y$ at $X_i$, $\hat{Y}_{(i)}$ 0s the fitted value at $X_i$ with the i-th observation removed, $MSE_{(i)}$ is the MSE calculated with teh i-th case removed, ahd $h_{ii}$ is the i-th diagonal of the hat matrix.
+
+This shows that it can be calculated from the residuals, the error sum of squares, and the hat matrix values. The value of $DFFITS_i$ represents the number of estimated standard deviations of $\hat{Y_i}$ that the fitted value increases or decreases with the inclusion of the i-th case in fitting the regression model. If $DFFITS_i$ is high, then it is influential on the fitted value.
+
+If case $i$ is an $X$ outlier and has high leverage, then $(\frac{h_{ii}}{1-h_{ii}})^{1/2} > 1$ and $DFFITS$ will be large in absolute value. As a guideline, influential cases are flagged if $$|DFFITS_i| > 1$$ for small to medium data sets and $$|DFFITS_i| > 2\sqrt{\frac{p}{n}}$$ for large data sets. This is a rule of thumb we use to flag influential values using DFFITS.
+
+## Cook's Distance
+
+The next metric we'll be talking about is the Cook's distance. The difference between Cook's distance and DFFITS is that Cook's distance considers the influence of the i-th case on the entire collection of $n$ fitted values instead of just one fitted value. The formula for cook's distance is $$D_i = \frac{\sum_{j=1}^{n} (\hat{Y_i} - \hat{Y_j}_{(i)})^2}{pMSE} = \frac{e_i^2}{pMSE}(\frac{h_{ii}}{(1-h_{ii})^2})$$ Cook's distance is a function of the residual $e_i$ and the leverage $h_{ii}$. It can be large if either the residual is large and the leverage moderate, or if the residual is moderate and the leverage is large, or both are large. It can be shown that $D_i \sim F(p, n-p)$. Since $F_{0.50}(p, n-p) \approx 1$, we consider points for which $D_i > 1$ to be influential. Ideally, we want the estimated $\hat{\beta}_{(i)}$ to be within the boundary of the 10 - 20\% confidence region. In R these regions are indicated in red.
+
+## DFBETAS
+
+DFBETAS are a measure for the influence that case $i$ has on each of the regression coefficients $b_k$, $k = 0, 1, ..., p-1$. $$DFBETAS_{(i)} = \frac{b_k - b_{k(i)}}{\sqrt{MSE_{(i)}c_{ii}}}$$ where $c_{ii}$ is the i-th diagonal element of $(\boldsymbol{X^TX})^{-1}$.
+
+A large value of $DFBETAS_{(i)}$ indicates a large impact of the i-th case on the k-th regression coefficient. As a guideline, we flag the observation as influential if $DFBETAS_{(i)} > \frac{2}{\sqrt{n}}$ for large data sets and $DFBETAS_{(i)} > 1$ for small datasets.
+
+## Example: Body Fat Data Analysis
+
+We now look at the Bank data set. We first load the data:
+
+```{r}
+bank = read.table("/System/Volumes/Data/MAT 3375/Summary Sheet/Bank Data.txt", header=TRUE, sep="\t")
+names(bank)
+```
+
+Now, we look at the diagnostic measures on each observation and determine which ones are influential.
+
+```{r, include=FALSE}
+library(olsrr)
+```
+
+```{r}
+y <- bank$Number.New.accounts
+x <- bank$Minimum.Deposit
+
+fit <- lm(y~x)
+
+# Cook's Distance vs. Observations
+ols_plot_cooksd_bar(fit)
+```
+
+From looking at the cook's distance chart, we find that the 4th observation is influential on the fitted values of the model at all $X$ values.
+
+Now, we construct a plot for DFFITS
+
+```{r}
+ols_plot_dffits(fit)
+```
+
+From looking at the plot of DFFITS vs. Observations, we find that the 4th observation is influential on the 4th fitted value of the model.
+
+Now, we construct plots of DFBETAS vs. Observations for each regression coefficient:
+
+```{r}
+ols_plot_dfbetas(fit)
+```
+
+From the DFBETAS vs. Observations plots, we find that the 4th and 7th observations are influential on the intercept, and the 4th, 7th, and 10th observations are influential on the slope.
+
+We can also look at the diagnostic metrics themselves using the following command:
+
+```{r}
+influence.measures(fit)
+```
+
+From looking at the above table, it indicates that the 4th observation is the most influential on the regression model.
+
+# Different Regression Models
+
+In this section, we talk about different regression models other than the linear regression models discussed in previous sections. We talk about 2 specific models in this section: Polynomial and Indicator Variables
+
+## Polynomial Regression
+
+Sometimes a linear model may not be the appropriate fit for a dataset. A polynomial regression can sometimes be a better fit.
+
+A k-order polynomial regression model in one variable takes the form $$Y = \beta_0 + \beta_1X + \beta_2X^2 + \beta_3X^3 + \dots + \beta_kX^k + \epsilon$$ which may be fitted using the matrix approach. It is important to keep in mind that in considering such a model, the order k should be as low as possible. If the value of $k$ gets too high, then the inversion of the matrix $X^TX$ may be inaccurate or not even exist, which would result in poor estimates of the parameters and their variances.
+
+Often, orthogonal polynomials are used in the modeling because they simplify the fitting process: $$Y_i = \beta_0P_0(X_i) + \beta_1P_1(X_i) + \beta_2P_2(X_i) + \dots + \beta_kP_k(X_i) + \epsilon_i$$ where $P_j$ is a $j$ order orthogonal polynomial satisfying $$\sum_{i=1}^{n} P_j(X_i)P_l(X_i) = 0$$ for all $j \neq l$ and we have $P_0(X_i) = 1$.
+
+Such polynomials have been tabulated. The least squares estimates are given by 
