@@ -1685,4 +1685,557 @@ A k-order polynomial regression model in one variable takes the form $$Y = \beta
 
 Often, orthogonal polynomials are used in the modeling because they simplify the fitting process: $$Y_i = \beta_0P_0(X_i) + \beta_1P_1(X_i) + \beta_2P_2(X_i) + \dots + \beta_kP_k(X_i) + \epsilon_i$$ where $P_j$ is a $j$ order orthogonal polynomial satisfying $$\sum_{i=1}^{n} P_j(X_i)P_l(X_i) = 0$$ for all $j \neq l$ and we have $P_0(X_i) = 1$.
 
-Such polynomials have been tabulated. The least squares estimates are given by 
+Such polynomials have been tabulated. The least squares estimates are given by $$\hat{\beta_j} = \frac{\sum_{i=1}^{n} P_j(X_i)Y_i}{P_j^2(X_i)}$$ for $j = 0, 1, ..., k$.
+
+The principal advantage of using orthogonal polynomials is that the model can be fitted sequentially. This specific advantange is less important today in the age of high speed computing compared to the times when much of the modeling was done using calculators.
+
+When two or more variables are involved, interaction terms are included as in the following model involving two variables: $$Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \beta_{11}X_1^2 + \beta_{22}X_2^2 + \beta_{12}X_1X_2 + \epsilon$$
+
+Such models are called response surfaces. They are often used in control theory problems to optimize the selection of control settings of the variables.
+
+## Indicator Regression Models
+
+Regression analysis allows the use of indicator variables which are qualitative or categorical in nature. Such variables are labeled dummy variables. For example, to take into account gender we may define 
+
+$$
+  X_2 = \left \{
+  \begin{array}{ll}
+    1  \quad \text{male} \\
+    0  \quad \text{female} \,
+  \end{array}
+  \right.
+$$
+An interesting application is to the case where one wishes to fit a simple linear model as a function of gender. Set $$Y = \beta_0 + \beta_1X_1 + \beta_2X_2 + \epsilon$$
+
+In that case, we have
+
+$$
+  Y = \left \{
+  \begin{array}{ll}
+    \beta_0 + \beta_1X_1 + \beta_2 + \epsilon \quad \text{male} \\
+    \beta_0 + \beta_1X_1 + \epsilon \quad \text{female} \,
+  \end{array}
+  \right.
+$$
+So here the lines are parallel.
+
+This can also be generalized to 2 or more dummy variables.
+
+## Example: Turkey Data Analysis
+
+We now consider the turkey data. We first load the data into a dataframe.
+
+```{r}
+Turkey <- read.table("/System/Volumes/Data/MAT 3375/Summary Sheet/Turkey data.txt", header=TRUE, sep="\t")
+Turkey
+```
+
+We want to first fit a regression model without considering the origin of the data. We only consider the turkey weights and ages.
+
+```{r}
+Age <- Turkey$Age
+Weight <- Turkey$Weight
+Origin <- Turkey$Origin
+Z1 <- Turkey$Z1
+Z2 <- Turkey$Z2
+plot(Age, Weight)
+model = lm(Weight~Age)
+anova(model)
+summary(model)
+```
+
+From looking at the summary above, we find that there is a significant relationship between Turkey age and weight as shown by the F statistic in the ANOVA table and the t statistic in the summary table. They both yield low p-values, which means we can reject $H_0: \beta_1 = 0$. We also find that the $R^2$ value is 0.6647, which means that around 66.47\% of variability is explained by the model.
+
+Now, we create diagnostic plots to check for model adequacy:
+
+```{r}
+Residuals <- model$residuals
+plot(model,1)
+plot(model,2)
+plot(model,3)
+plot(model,4)
+plot(model,5)
+plot(model,6)
+```
+From looking at the normal qq-plot, we find that theere is some variability among the points, so the normality assumption may not be reasonable in this model. From looking at the residuals vs. fitted plot, there seems to be a curve pattern among the points so a linear model may not be the best fit. We also find that the 2nd observation is influential on the fitted values from looking at the Cook's distance plot.
+
+Now, we fit a model with weight, age, and origin. To add origin as a predictor, we add the dummy variables $Z_1$ and $Z_2$ into the model.
+
+```{r}
+model1 <- lm(Weight~Age+Z1+Z2, data=Turkey)
+anova(model1)
+summary(model1)
+```
+
+From looking at both the ANOVA table and the summary table, we find that there is a significant relationship between Turkey weight and age, $Z_1$, and $Z_2$, which means that there is a significant relationship between weight and age and between weight and origin. The $R^2$ value is 0.9794, which is a significant improvement compared to the model without origin as a variable. This means that 97.94\% of variability is explained by the model.
+
+Now, we create plots to check for model adequacy
+
+```{r}
+Residuals1 <- model1$residuals
+plot(model1,1)
+plot(model1,2)
+plot(model1,3)
+plot(model1,4)
+plot(model1,5)
+plot(model1,6)
+plot(Weight,Residuals)
+plot(Weight,Residuals1)
+```
+
+The normal qq-plot is significantly improved compared to the previous model. The points follow a straight-line pattern closely. This means that the normality assumption is reasonable. The residuals vs. fitted plot indicates that a linear model may not be the best fit since there appears to be a slight curve pattern. From the Cook's distance plot, we find that the second observation is influential on the fitted values.
+
+## Example: Hardwood Data
+
+Now, we analyze the Hardwood data. We look at the polynomial regression model in this case. We first load the data.
+
+```{r}
+Hardwood <- read.table("/System/Volumes/Data/MAT 3375/Summary Sheet/Hardwood Data.txt",
+                       header=TRUE, sep="\t")
+Hardwood
+```
+
+We first fit a linear model of tensile strength vs. concentration.
+
+```{r}
+x <- Hardwood$Concentration
+y <- Hardwood$Tensile.Strength.Y
+x2 = x*x
+plot(Hardwood)
+```
+
+From looking at the plot, it seems like the points do not follow a linear pattern, so a linear model likely won't be a good fit for the data. It looks more like a quadratic pattern. We first try fitting a linear model, then we try fitting a quadratic model.
+
+```{r}
+model <- lm(y~x, data=Hardwood)
+anova(model)
+summary(model)
+```
+
+From looking at the ANOVA table and the summary of the model, we find that there is a significant relationship between tensile strength and concentration. However, the relationship is only significant at the 0.05 level. The $R^2$ value is 0.3054, which means that only 30.54\% of variability is explained by the model, which is low. 
+
+Now, we fit a polynomial regression model and see if we can improve the relationship:
+
+```{r}
+model2 <- lm(y~x+x2)
+anova(model2)
+summary(model2)
+```
+The quadratic model is a much better fit. There seems to be a highly significant relationship between tensile strength and concentration. The $R^2$ value is 0.9085, which means that around 90.85\% of variability in $Y$ is explained by the model. This is significantly higher than the original linear model without the quadratic term.
+
+Now, we check for model adequacy:
+
+```{r}
+par(mfrow = c(2,2))
+plot(model2)
+```
+
+There is evidence of a nonlinear relationship between $X$ and $Y$ since there is a curve pattern in the residuals vs. fitted plot. It also means that the constancy of variance assumption is not always reasonable. We also have that the normal qq-plot doesn't follow a straight line pattern, so the normality assumption also doesn't seem reasonable with the model.
+
+# Multicollinearity and Ridge Regression
+
+When there is correlation among the predictors themselves in a linear regression model, then we say that multicollinearity exists. In this section, we talk about some potential signs of multicollinearity, diagnostics for multicollinearity, and remedial measures to overcome this problem.
+
+## Multicollinearity overview
+
+Some symptoms of multicollinearity include large variation in the estimated coefficients when a new variable is either added or deleted, when there are non significant results in individual tests on the coefficients of important variables, when there's large coefficients of simple correlation between pairs of variables, and when the confidence intervals for the regression coefficients of important variables are too wide.
+
+When the variables are correlated among themselves, we say that multicollinearity exists. The principal difficulty is that the matrix $\boldsymbol{X^TX}$ may not be invertible. Multicollinearity also affects the interpretation of the coefficients as they may vary in value. Consider the case of two predictor variables $X_1$, $X_2$. If the variables are standardized, then we have the matrix $$\boldsymbol{X^TX} = \begin{pmatrix} 1 & r_{12} \\ r_{12} & 1 \end{pmatrix}$$ where $r_{12}$ is the correlation between the two variables. Then we get that $$\boldsymbol{(X^TX)^{-1}} = \frac{1}{1 - r_{12}^2} \begin{pmatrix} 1 & r_{12} \\ r_{12} & 1 \end{pmatrix} $$ and consequently, the variance-covariance matrix of the coefficients is $$\sigma^2(X^TX)^{-1} = \sigma^2 \frac{1}{1 - r_{12}^2} \begin{pmatrix} 1 & -r_{12} \\ -r_{12} & 1 \end{pmatrix}$$ As a result, as $|r_{12}| \rightarrow 1$, we have that the variance of the individual coefficients approach $\infty$. As $r_{12} \rightarrow \pm 1$, we have that the covariance of the coefficients approach $\pm \infty$. This means that the variance and covariance of the estimates of the coefficients grows larger when the correlation between individual coefficients gets closer to 1. In other words, multicollinearity causes the variance of the coefficients to become larger.
+
+In general, the diagonal elements of $\boldsymbol{(X^TX)^{-1}}$ are $C_{jj} = \frac{1}{1 - R_j^2}$ where $R^2_j$ is the R-squared value obtained from the regression of $X_j$ on the other $p - 1$ variables. If there is strong multicollinearity between $X_j$ and the other $p - 1$ variables, then $R^2_j \approx 1$ and $Var[\hat{\beta_j}] \approx \infty$.
+
+Under multicollinearity, the values of the estimates will also be large. We set $$L = ||\boldsymbol{\hat{\beta} - \beta}||^2$$ Then, 
+
+\begin{equation*}
+  \begin{split}
+    E[\sum_{j = 1}^{p} (\hat{\beta_j} - \beta_j)^2]
+    &= \sum_{j = 1}^{p} Var[\hat{\beta_j}] \\
+    &= \sigma^2 Trace[\boldsymbol{(X^TX)^{-1}}] \\
+    &= \sigma^2 \sum_{j=1}^{p} \frac{1}{\lambda_j}
+  \end{split}
+\end{equation*}
+
+where $\{\lambda_j\}$ are the eigenvalues of $\boldsymbol{X^TX}$.
+
+Under multicollinearity, some of these eigenvalues will be small and hence their inverses will be large. 
+
+We expand the loss function $L$, then we get $L = \boldsymbol{\hat{\beta}^T\hat{\beta} - 2\hat{\beta}\beta + \beta^T\beta}$. Taking the expectation, we get
+
+\begin{equation*}
+  \begin{split}
+    E[L]
+    &= E[||\boldsymbol{\hat{\beta}}||^2] - ||\boldsymbol{\beta}||^2 \\
+    &= \sigma^2 \sum_{j=1}^{p} \frac{1}{\lambda_j}
+  \end{split}
+\end{equation*}
+
+Hence, $E[||\boldsymbol{\hat{\beta}}||^2] = ||\boldsymbol{\beta}||^2 + \sigma^2 \sum_{j=1}^{p} \frac{1}{\lambda_j}$. This shows that the estimators are large when the inverses of the eigenvalues are large as a result of multicollinearity. In conclusion, multicollinearity causes the estimates of coefficients and the variances of the coefficient estimates to be large.
+
+## Multicollinearity Diagnostics
+
+We start by standardizing the variables.
+
+$$Y_i^* = \frac{1}{\sqrt{n-1}}(\frac{Y_i - \overline{Y}}{s_Y})$$
+$$X_{ik}^* = \frac{1}{\sqrt{n-1}}(\frac{X_{ik} - \overline{X_k}}{s_k})$$
+where $s_Y$ is the standard deviation of the observations of $Y_i$ and $s_k$ is the standard deviation of the observations of $X_{ik}$.
+
+Then we get that $$Y_i^* = \sum_{k=1}^{p-1} \beta_i^*X_{ik}^* + \epsilon_i^*$$
+
+$$\beta_k = (\frac{s_Y}{s_k})\beta_k^*$$
+$$\beta_0 = \overline{Y} - \sum_{i=1}^{p-1} \beta_i\overline{X}_i$$
+$$r_{XX}b^* = r_{YX}$$
+where $r_{XX}$ is the correlation matrix $$r_{XX} = \begin{pmatrix} 1 & r_{12} & \dots & r_{1, p-1} \\ r_{12} & 1 & \dots & r_{2, p-1} \\ \dots & \dots & \dots & \dots \\ r_{1, p-1} & \dots & \dots & 1 \end{pmatrix}$$ and $$r_{YX} = \begin{pmatrix} r_{Y1} \\ r_{Y2} \\ \dots \\ r_{Y, p-1} \end{pmatrix}$$ We also have $r_{ij} = Corr(X_i, X_j)$ and $r_{Yi} = Corr(Y, X_i)$.
+
+We now talk about diagnostics for multicollinearity. We first talk about the variance inflation factors (VIFs). Suppose that the regression is fitted using standardized predictor variables. Then we have $Var[\boldsymbol{b}] = \sigma^2 r_{XX}^{-1}$, where $r_{XX}$ is the matrix of pairwise correlation coefficients among the predictors. We define the variance inflation factor (VIF) $$(VIF)_k = (1 - R^2_{k})^{-1}$$ where $R^2_k$ is the coefficient of multiple determination where $X_k$ is regressed on the $p-2$ other $X$ variables. Hence, $Var[b_k] = \sigma^2(1 - R^2_k)^{-1}$. This means that the VIFs can inflate the variances of the estimates of the coefficients, which is a sign of multicollinearity.
+
+For each variable $X_k$, we have that $(VIF)_k = 1$ when $R^2_k = 0$. Whenever $X_k$ is not linearly related to the other $X$ variables in the model. Under perfect correlation ($R^2_k = 1$), the variance is unbounded. As a rule of thumb, a value $(VIF)_k > 10$ indicates that multicollinearity exists. Alternatively, we can compute the average $$\overline{VIF} = \frac{\sum (VIF)_k}{p-1}$$ Mean values much greater than 1 point to serious multicollinearity.
+
+We now talk about some other diagnostic measures for multicollinearity. As mentioned previously, the eigenvalues $\lambda_i$ of the matrix $\boldsymbol{X^TX}$ can be used to measure the extend of multicollinearity in the system. If one or more are small, then there are near linear dependencies in the columns of $\boldsymbol{X^TX}$.
+
+The condition number $\kappa$ and condition indices $\kappa_j$ of $\boldsymbol{X^TX}$ are defined to be $$\kappa = \frac{\lambda_{max}}{\lambda_{min}}$$ and $$\kappa_j = \frac{\lambda_{max}}{\lambda_j}$$
+
+We use the following rule of thumb: we say that there is no serious multicollinearity if $\kappa < 100$, there is moderate to strong multicollinearity if $100 < \kappa < 1000$, and there is severe multicollinearity if $\kappa > 1000$.
+
+## Ridge Regression
+
+Ridge regression is considered as a remedial measure to multicollinearity. The theory is as follows. We first transform the normal equation using standardized variables, so it goes from $(X^TX)b = X^TY$ to $r_{XX}b = r_{YX}$.
+
+Instead of solving the original normal equation, we instead solve the equation $$(r_{XX} + cI)b^R = r_{YX}$$ where $c > 0$ is a constant and $b^R$ is the ridge regression estimate of the parameters. The standardized ridge regression coefficients become $$b^R = (r_{XX} + cI)^{-1}r_{YX}$$
+
+The constant $c$ reflects the fact that the ridge estimators will be biased (i.e. $E[b^R] \neq \beta^*$) but they tend to be more stable or less variable than the ordinary least squares estimators.
+
+The constant $c$ is usually chosen in such a way that the estimators of $b_k^R$ are stable in value. Alternatively, whenever the $(VIK)_k$ are stable in value. A plot of coefficients against $c$ is called the ridge trace and this helps in the selection of $c$.
+
+Ridge regression can also be obtained from the method of penalized regression. We have the following system of equations:
+
+$$
+\begin{aligned}
+  (1+c)b_1^R + r_{12}b_2^R + \dots + r_{1, p-1}b_{p-1}^R = r_{Y1} \\
+  r_{21}b_1^R + (1 + c)b_2^R + \dots + r_{2, p-1}b_{p-1}^R = r_{Y2} \\
+  \dots \\
+  r_{p-1,1}b_1^R + r_{p-1,2}b_2^R + \dots + (1+c)b_{p-1}^R = r_{Y, p-1}
+\end{aligned}
+$$
+This is also the same as solving the penalized least squares $$Q = \sum [Y_i - \beta_1X_{i1} - \dots - \beta_{p-1}X_{i, p-1}]^2 + c\sum_{j=1}^{p-1} \beta_j^2$$
+
+If we differentiate the equation above with respect to each of the parameters, we get the system of equations above. In the above equation, the penalty function is $c\sum_{j=1}^{p-1} \beta_j^2$
+
+The major drawback of ridge regression is that the ordinary inference procedures are no longer applicable (i.e. ANOVA, t-tests, correlation tests). We need to use resampling methods to obtain the precision of the estimators.
+
+Another approach is to use a penalty function $$c \sum_{j=1}^{p-1} |\beta_j|$$ which permits some regression coefficients to be 0. This is know as LASSO regression, which stands for Least Absolute Shrinkage and Selection Operator.
+
+## Example: Body Fat Data Analysis
+
+Consult the example Alvo did in class. He did not upload the Body Fat data to Brightspace.
+
+# Building the regression model
+
+In this section, we talk about selecting the best model when given several predictor variables. We discuss how to select a subset of all predictors such that the model is a good fit for the data.
+
+If $p-1$ predictors are available, then there will be $2^p - 1$ possible models which can be constructed.
+
+## All possible regressons
+
+This method is self explanatory. We consider all $2^p - 1$ possible models.
+
+We talk about criteria for model selection. There are several criteria to consider when we pick a model.
+
+### $R^2$
+
+The $R^2$ criteria chooses the model with the largest value of explained variation. A plot of the mean square residual vs. the number of variables in the model will appear as a parabola with the last entry "curving" up a bit. This is the one with all variables in. One may draw a horizontal line parallel to the x-axis. The point where it meets the parabola determines the best fitting model since it will be as good as when all variables are included.
+
+### Adjusted $R^2$
+
+An adjusted $R^2$ takes into account the values of $n$ and $p$
+
+\begin{equation*}
+  \begin{split}
+    R^2_{a, p} 
+    &= 1 - (\frac{n-1}{n-p})\frac{SSE}{SSTO} \\
+    &= 1- \frac{MSE(p)}{SSTO/(n-1)}
+  \end{split}
+\end{equation*}
+
+The criteria minimum $MSE(p)$ and maximum adjusted $R^2$ are equivalent. The adjusted $R^2$ does not necessarily increase as additional explanatory variables are added into the model. This value is similar to the $R^2$ value except that it can be negative.
+
+### Mallow's $C_p$
+
+Now, we talk about another criteria that is used for model selection. We derive the Mallow's $C_p$ criterion first.
+
+Suppose that the true model has $q$ predictor variables $$\boldsymbol{Y} = \boldsymbol{X_{q}\beta_{q} + \epsilon}$$
+
+Suppose instead we fit a model using only $p$ predictor variables. Let $\boldsymbol{H_p}$ be the hat matrix using only $p$ variables. The bias for the i-th fitted value is $$E[\hat{Y_i}] - \mu_i$$ where $\mu_i$ is the true mean. Consequently, $$E[(\hat{Y_i} - \mu_i)^2] = (E[\hat{Y_i}] - \mu_i)^2 + Var[\hat{Y_i}]$$
+
+The total mean squared error for all the fitted values divided by $\sigma^2$ is $$\Gamma_p = \frac{1}{\sigma^2}(\sum_{i}(E[\hat{Y_i}] - \mu_i)^2 + \sum_{i}Var[\hat{Y_i}])$$
+
+We may estimate $\sigma^2$ by the $MSE$ when all the variables are included.
+
+The vector of residuals becomes $$\boldsymbol{e_p} = \boldsymbol{(I - H_p)Y}$$ and the error sum of squares is $$SSE_p = \boldsymbol{e_p^Te_p}$$
+
+It follows that $$bias = E[\boldsymbol{e_p}] = \boldsymbol{(I - H_p)E[Y]} = E[\boldsymbol{Y}] - E[\boldsymbol{\hat{Y}}]$$ since $E[\boldsymbol{H_pY}] = \boldsymbol{H_p}E[\boldsymbol{Y}] = E[\boldsymbol{\hat{Y}}]$. 
+
+When $p = q$, $bias = E[\boldsymbol{Y}] - E[\boldsymbol{\hat{Y}}] = 0$
+
+Now, using the idempotency of $\boldsymbol{(I - H_p)}$, we get
+
+\begin{equation*}
+  \begin{split}
+    E[SSE_p]
+    &= E[\boldsymbol{e_p^Te_p}] \\
+    &= E[\boldsymbol{Y^T(I - H_p)Y}] \\
+    &= E[\boldsymbol{Y^T(I-H_p)(I-H_p)Y}] \\
+    &= \sigma^2Trace[\boldsymbol{I-H_p}] + (bias)^T(bias) \\
+    &= \sigma^2(n - p) + \sum_{i}(E[\hat{Y_i}] - \mu_i)^2
+  \end{split}
+\end{equation*}
+
+The total mean squared error for all the fitted values divided by $\sigma^2$ is then
+
+\begin{equation*}
+  \begin{split}
+    \Gamma_p
+    &= \frac{1}{\sigma^2}E[\sum_{i}(E[\hat{Y_i}] - \mu_i)^2 + \sum_{i}Var[\hat{Y_i}]] \\
+    &= \frac{1}{\sigma^2}(E[SSE_p] - \sigma^2(n-p) + \sum_{i}Var[\hat{Y_i}]) \\
+    &= \frac{1}{\sigma^2}E[SSE_p] - (n - p) + \frac{1}{\sigma^2}\sum_{i=1}^{n}Var[\hat{Y_i}] \\
+    &= \frac{1}{\sigma^2}E[SSE_p] - (n - p) + \frac{1}{\sigma^2}\sigma^2 \sum_{i=1}^{n}[\boldsymbol{x_i^T(X^TX)^{-1}x_i}] \\
+    &= \frac{1}{\sigma^2}E[SSE_p] - (n - p) + \frac{1}{\sigma^2}\sigma^2Trace[\boldsymbol{H_p}] \\
+    &= \frac{1}{\sigma^2}E[SSE_p] - (n - p) + \frac{1}{\sigma^2}\sigma^2p \\
+    &= \frac{1}{\sigma^2}E[SSE_p] - (n - p) + p
+  \end{split}
+\end{equation*}
+
+Hence, we get that $$\Gamma_p = \frac{1}{\sigma^2}E[SSE_p] - (n - 2p)$$
+
+If we estimate $\sigma^2$ by MSE with all predictors and $E[SSE_p]$ by $SSE_p$ then the Mallow's criteria becomes $$C_p = \frac{SSE_p}{MSE} - (n - 2p)$$
+
+If the p-term model has negligible bias, then $E[SSE_p] \approx (n-p)\sigma^2$ and $C_p \approx p$. Mallows proposed a graphical technique to find the optimal subset. Plot $C_p$ vs. $p$ for all possible regressions. Models with small bias will be close to the line $C_p = p$ while those with large bias will be above the line. Values below the line are considered to have no bias.
+
+### Akaike Information Criterion
+
+Akaike proposed a criteria based on minimizing the expected entropy of the model, which is essentially a penalized likelihood measure. In the case of ordinary least squares regression, it becomes $$AIC_p = n\ln(SSE_p) - n\ln(n) + 2p$$ 
+
+As more variables are included, $AIC_p$ decreases and the issue becomes whether or not the decrease justifies the inclusion of more variables.
+
+### Schwartz's Bayesian Criterion
+
+A Bayesian extension of the Akaike criterion was proposed by Schwartz $$BIC_{Sch} = n\ln(SSE_p) - n\ln(n) + p(\ln(n))$$
+
+This criterion places a greater penalty than the Akaike criterion and it is the one used by R.
+
+### Prediction Sum of Squares Criterion (PRESS)
+
+Sometimes regression equations are used to predict future values. A different criteria used is to select the model which minimizes $$PRESS_p = \sum_{i} [Y_i - \hat{Y}_{(i)}]^2$$ where $\hat{Y}_{(i)}$ is the fitted value when the i-th observation is deleted.
+
+## Forward Selection
+
+In the previous section, we talked about all possible regressions and how to use different criteria to select the best model out of all. In this section and the next 2 sections, we talk about iterative models that can be helpful in selecting the best model. These methods work better with many predictors since using all possible regressions can be computationally difficult with $2^p - 1$ models when $p$ is large. 
+
+We first talk about Forward Selection. We start with no regressors in the model (i.e. intercept only). We compute the standardized student t statistic for each variable and choose the one with the greatest absolute value to include in the model. This is also the variable that has the largest simple correlation with the response. We also choose a pre-selected critical $F$ value, denote it by $F_{in}$.
+
+With the variable selected, we choose the next variable using the same criteria as the previous step after adjusting for the effect of the first variable selected. The criteria makes use of partial correlations which are computed between the residuals from the previous step and the residuals from the regressions of the other regressors on $X_j$, that is residuals from $\hat{Y} = \hat{\beta_0} + \hat{\beta_1}X_1$ and residuals from $\hat{X_j} = \hat{\alpha_{0j}} + \hat{\alpha_{1j}}X_1$ for $j = 2, ..., k$. In short, we plot the residuals from the 2 models and we choose $X_j$ such that it maximizes the partial correlation.
+
+If $X_2$ is selected, it implies that the largest partial $F$ statistic is $$F = \frac{SSR(X_2|X_1)}{MSE(X_1, X_2)}$$
+If $F > F_{in}$, then $X_2$ is entered into the model. Then we keep going until either all variables are included or when the largest partial $F$ statistic no longer exceeds $F_{in}$.
+
+One drawback to this method is that once a variable is entered, it doesn't get eliminated. This means that the variable can turn out to not be significant in the chosen model but it doesn't get removed.
+
+## Backward Elimination
+
+This model is the opposite of Forward Selection discussed in the section above. We start with all regressors in the model (i.e. the full model with all predictors included). Compute the partial $F$ statistic for each regressor as if it were the last one to enter the model. We compare the smallest partial $F$ with a pre-selected $F_{out}$ value. If it is smaller, then that variable is removed from the model. The procedure is repeated until the smallest partial $F$ statistic is not less than $F_{out}$ or when all variables are removed. Backward elimination is often preferred to forward selection because it begins with all the variables in the model.
+
+One drawback is that once a variable is eliminated, it cannot be added back into the model. This can be a problem if that variable is significant in the reduced model chosen.
+
+## Stepwise Selection
+
+Stepwise Selection combines the 2 approaches Forward Selection and Backward Elimination. It is a modification of forward selection in that it reassesses each of the regressors already in the model to see if it has become redundant. We need to pre-select $F_{in}$ and $F_{out}$. Usually, we choose $F_{in} > F_{out}$ so that it becomes more difficult to add a variable than to remove it.
+
+## Example: Hald Cement Data Analysis
+
+We now look at an example that examines the Hald Cement data. We first load the data:
+
+```{r}
+Cement <- read.table("/System/Volumes/Data/MAT 3375/Summary Sheet/Hald Cement Data.txt", header=TRUE, sep="\t")
+```
+
+```{r, include=FALSE}
+library(olsrr)
+```
+
+```{r}
+names(Cement)
+plot(Cement)
+cor(Cement)
+```
+From looking at the correlation matrix and the plot matrix, we find that $Y$ is strongly correlated with $X_1$, $X_2$, and $X_4$. There also appears to be multicollinearity between $X_1$ and $X_3$ and between $X_2$ and $X_4$.
+
+Now, we look at multicollinearity diagnostics:
+
+```{r}
+model <- lm(Y~., data=Cement)
+ols_coll_diag(model)
+```
+
+From looking at the VIFs, we have that there is strong multicollinearity with $X_2$ and $X_4$ when all predictors are fitted. This means that we should pick a model that doesn't necessarily include all variables.
+
+We first try running all possible regressions:
+
+```{r}
+k = ols_step_all_possible(model)
+k
+```
+From looking at the $R^2$, adjusted $R^2$, and the Mallow's $C_p$ criterion, we find that the model involving $X_1$, $X_2$, and $X_4$ is the best model. However, we have seen that there is strong multicollinearity when both $X_2$ and $X_4$ are included in the model. So we can choose a further reduced model. The model with $X_1$, $X_2$, and $X_3$ also looks like a good model since it has a high $R^2$ value and the $C_p$ value is close to the number of predictors. However, from looking at the correlation matrix, there's high correlation between $X_1$ and $X_3$. We see that the model using only $X_1$ and $X_2$ has a high $R^2$ and adjusted $R^2$ and the $C_p$ criterion is also close to the number of predictors. Therefore, the model involving only $X_1$ and $X_2$ is a good model to choose.
+
+```{r}
+plot(k)
+```
+
+Now, we run best subset selection and choose the best model using it.
+
+```{r}
+k = ols_step_best_subset(model)
+k
+```
+
+We find that the best subset is the subset $X_1$, $X_2$, and $X_4$. However, as mentioned previously, there may be multicollinearity issues with the model. The next best model is the model with 2 predictors $X_1$ and $X_2$, which has less multicollinearity issues. This means that it's better to choose the subset with $X_1$ and $X_2$.
+
+Now, we run forward selection
+
+```{r}
+ols_step_forward_p(model, details=TRUE)
+```
+
+We have seen that the forward selection method selected the variables $X_1$, $X_2$, and $X_4$ in the model. It selected $X_4$ first, then $X_1$, finally $X_2$. This is the same as the best model selected using all possible regressions. Again, there is multicollinearity issues if this model is selected.
+
+Now, we run backward elimination:
+
+```{r}
+ols_step_backward_p(model, details = TRUE)
+```
+
+We can see that backward elimination has eliminated the variable $X_3$ from the model, so we have that the method selected $X_1$, $X_2$, and $X_4$ in the model.
+
+Finally, we run stepwise selection:
+
+```{r}
+ols_step_both_p(model, details = TRUE)
+```
+
+We see that stepwise selection has added the variables $X_1$, $X_2$, and $X_4$. It didn't eliminate any variables. Therefore, it also selected $X_1$, $X_2$, and $X_4$ to be used in the model.
+
+# Logistic Regression
+
+In all the sections above, we talked about ordinary linear regression, where we assume that the model is linear in the parameters. In this section, we consider the case where the response variable $Y_i$ is binary and the appropriate model and inferences.
+
+## Logistic Regression Model
+
+Sometimes the response variable is discrete. For example, we may wish to model gender or to estimate the likelihood that a person is wearing a life jacket. 
+
+We first consider the linear regression model $$Y_i = \beta_0 + \beta_1X_i + \epsilon_i$$ where 
+
+$$
+  Y_i = \left \{
+  \begin{array}{ll}
+    1  \quad \text{with probability } \pi_i \\
+    0  \quad \text{with probability } 1 - \pi_i \,
+  \end{array}
+  \right.
+$$
+
+Then we have $E[Y_i] = \pi_i$ since $Y_i \sim Ber(\pi_i)$.
+
+In this case, the usual least squares fitting approach is problematic because the assumptions are no longer reasonable:
+
+\begin{itemize}
+  \item the variance of $Y_i$, where $Var[Y_i] = \pi_i(1 - \pi_i)$ is not constant since it changes based on $\pi_i$
+  \item the error terms are not normally distributed (since $Y_i$ follow a Bernoulli distribution)
+  \item there is no guarantee that the fitted model will force the estimate $\hat{Y_i}$ to be in the interval $(0, 1)$
+\end{itemize}
+
+The logistic distribution has density $$f(x) = \frac{e^x}{(1+e^x)^2} \text{, } -\infty < x < \infty$$ and cumulative distribution function $$F(t) = \frac{e^t}{1 + e^t}$$
+
+We can show $E[X] = 0$ and $Var[X] = \frac{\pi}{3}$.
+
+Suppose that a random variable $Y$ is binary with 
+
+$$
+  Y_i = \left \{
+  \begin{array}{ll}
+    1  \quad \text{if } \beta_0^* + \beta_1^*X_i + \epsilon_i^* < k\\
+    0  \quad \text{if } \beta_0^* + \beta_1^*X_i + \epsilon_i^* > k \,
+  \end{array}
+  \right.
+$$
+
+for some constant $k$ where $\epsilon_i^*$ has a logistic distribution.
+
+Then we get 
+
+\begin{equation*}
+  \begin{split}
+    \pi_i
+    &= P(Y_i = 1) \\
+    &= P(\beta_0^* + \beta_1^*X_i + \epsilon_i^* < k) \\
+    &= F(k - \beta_0^* - \beta_1^*X_i) \\
+    &= F(\beta_0 + \beta_1X_i) \\
+    &= \frac{exp(\beta_0 + \beta_1X_i)}{(1 + exp(\beta_0 + \beta_1X_i))}
+  \end{split}
+\end{equation*}
+
+where $\beta_0 = k - \beta_0^*$ and $\beta_1 = -\beta_1^*$
+
+So we get that $$E[Y_i] = \pi_i = \frac{exp(\beta_0 + \beta_1X_i)}{(1 + exp(\beta_0 + \beta_1X_i))}$$. This is the structure of the logistic regression model.
+
+It is common practice to model the logarithm of the odds ratio $$\log(\frac{\pi_i}{1-\pi_i}) = \log(\frac{P(Y_i = 1)}{1 - P(Y_i = 1)}) = \beta_0 + \beta_1X_i$$
+
+The estimation of the parameters is based on maximizing the likelihood:
+
+\begin{equation*}
+  \begin{split}
+    \prod_{i}f(y_i) 
+    &= \prod_{i}\pi_i^{y_i}(1 - \pi_i)^{1 - y_i} \\
+    &= \prod_{i} [(\frac{\pi_i}{1 - \pi_i})^{y_i}(1 - \pi_i)] \\
+  \end{split}
+\end{equation*}
+
+Then we take the log likelihood.
+
+$$logL = \sum y_i\log(\frac{\pi_i}{1 - \pi_i}) + \sum \log(1 - \pi_i) = \sum y_i(\beta_0 + \beta_1X_i) - \sum \log(1 + exp(\beta_0 + \beta_1X_i))$$
+
+There is no closed form solution. Instead, numerical methods are used to obtain a solution for $\beta_0$ and $\beta_1$, denoted by $b_0$ and $b_1$ and we get $$\hat{\pi_i} = \frac{exp(b_0 + b_1X_i)}{(1 + exp(b_0 + b_1X_i))}$$
+
+To interpret the parameters in the logistic regression model, let us consider the fitted value at a specific value of $X$, say $X_0$. Then the difference between the log odds at $X_0 + 1$ and the log odds at $X_0$ is $$logodds(X_0 + 1) - logodds(X_0) = \hat{\beta_1}$$ meaning that for every unit increase in $X_0$, the log odds $\log(\frac{\pi_i}{1 - \pi_i})$ at $X_0$ increases by an average of $\hat{\beta_1}$ units. 
+
+Taking the antilogarithms, we obtain the odds ratio $$\hat{O}_R = e^{\hat{\beta_1}}$$
+
+The odds ratio is the estimated increase in the probability of successes associated with a one unit change in the value of the predictor variable. For a change of $d$ units, the odds ratio becomes $$\hat{O}_R = e^{d\hat{\beta_1}}$$
+
+## Repeat Observations
+
+In the section above, we looked at when we took individual observations at each $X$ value. Now, we look at repeat observations. Suppose that we have repeat observations at each of the leels of the $X$ variables and set $Y_i$ to be the number of 1s observed for the i-th observation. Let $n_i$ be the number of trials at each observation. Then $Y_i \sim Bin(n_i, \pi_i)$. In that case, estimation is done by maximizing
+
+\begin{equation*}
+  \begin{split}
+    \log L(\beta_0, \beta_1)
+    &= \log \prod_{i=1}^{n} {n_i \choose y_i}\pi_i^{y_i}(1-\pi_i)^{n_i - y_i} \\
+    &= \sum_{i=1}^{n}(\log({n \choose y_i}) + y_i(\log(\pi_i)) + (n_i - y_i)\log(1 - \pi_i))
+  \end{split}
+\end{equation*}
+
+## Multiple Logistic Models
+
+We can also involve multiple predictors in the logistic regression model. Specifically, we have $$\boldsymbol{X^T\beta} = \beta_0 + \beta_1X_{i1} + \beta_2X_{i2} + \dots + \beta_{p-1}X_{i, p-1}$$ and $$E[Y] = \frac{exp(\boldsymbol{X^T\beta})}{1 + exp(\boldsymbol{X^T\beta})}$$ so that $$\log(\frac{\boldsymbol{\pi}}{1 - \boldsymbol{\pi}}) = \boldsymbol{X^T\beta}$$
+
+## Inference on model parameters
+
+Now, we talk about inference on the parameters of the model. There are several diagnostics that we can use to make inferences. 
+The maximum likelihood estimators are approximately normally distributed with variances and covariances that are functions of the second order partial derivatives of the likelihood function.
+
+Let $\boldsymbol{G} = (\frac{\partial^2 L(\beta)}{\partial \beta_i \partial \beta_j}) \equiv (g_{ij})$ lebeled the Hessian where $$\log L(\beta) = \sum_{i=1}^{n}Y_i(X_i^T\beta) - \sum_{i=1}^{n} \log (1 + e^{X_i^T\beta})$$
+
+The linear predictor is $\boldsymbol{X^T\hat{\beta}}$ and the fitted value is $\hat{Y_i} = \hat{\pi_i} = \frac{exp(X_i^T\hat{\beta})}{(1 + exp(X_i^T\hat{\beta}))}$.
+
+It can be shown that $$E[\boldsymbol{b}] = \boldsymbol{\beta}$$
+
+The variance estimate is given by $$Var[\boldsymbol{b}] = (\boldsymbol{X^TVX})^{-1}$$ where $\boldsymbol{V}$ is a diagonal matrix with $V_{ii} = n_i\hat{\pi_i}(1 - \hat{\pi_i})$. Moreover, we have that $$\frac{b_k - \beta_k}{s[b_k]} \sim N(0, 1)$$ for $k = 0, ..., p-1$, which is used for testing and constructing confidence intervals. The test statistic to test $H_0: \beta_k = 0$ is $$\frac{b_k}{s[b_k]} \sim N(0, 1)$$ and a confidence interval is $$b_k \pm z_{\alpha/2} \cdot s[b_k]$$
+
+To test whether several coefficients are 0, we make use of the likelihood ratio test whereby we compare the full mode l (FM) with the reduced model (RM). Let $$LR = -2\log[\frac{L(RM)}{L(FM)}]$$ If the reduced model is correct, $LR$ follows asymptotically a chi-squared distribution with degrees of freedom equal to the difference in the number of parameters between the full and reduced models. $df_{RM} - df_{FM} = (n-q)
