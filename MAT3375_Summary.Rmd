@@ -2238,4 +2238,162 @@ It can be shown that $$E[\boldsymbol{b}] = \boldsymbol{\beta}$$
 
 The variance estimate is given by $$Var[\boldsymbol{b}] = (\boldsymbol{X^TVX})^{-1}$$ where $\boldsymbol{V}$ is a diagonal matrix with $V_{ii} = n_i\hat{\pi_i}(1 - \hat{\pi_i})$. Moreover, we have that $$\frac{b_k - \beta_k}{s[b_k]} \sim N(0, 1)$$ for $k = 0, ..., p-1$, which is used for testing and constructing confidence intervals. The test statistic to test $H_0: \beta_k = 0$ is $$\frac{b_k}{s[b_k]} \sim N(0, 1)$$ and a confidence interval is $$b_k \pm z_{\alpha/2} \cdot s[b_k]$$
 
-To test whether several coefficients are 0, we make use of the likelihood ratio test whereby we compare the full mode l (FM) with the reduced model (RM). Let $$LR = -2\log[\frac{L(RM)}{L(FM)}]$$ If the reduced model is correct, $LR$ follows asymptotically a chi-squared distribution with degrees of freedom equal to the difference in the number of parameters between the full and reduced models. $df_{RM} - df_{FM} = (n-q)
+To test whether several coefficients are 0, we make use of the likelihood ratio test whereby we compare the full mode l (FM) with the reduced model (RM). Let $$LR = -2\log[\frac{L(RM)}{L(FM)}]$$ If the reduced model is correct, $LR$ follows asymptotically a chi-squared distribution with degrees of freedom equal to the difference in the number of parameters between the full and reduced models. $df_{RM} - df_{FM} = (n-q) - (n-p)$. We reject for large values (i.e. $LR > \chi^2_{p-q}$).
+
+In the present situation, for the simple logistic model, the Full model is the one that has been fitted whereas the Reduced model is the one with constant probability of success $$E[Y] = \pi = \frac{e^{\beta_0}}{1 + e^{\beta_0}}$$
+
+Under RM, the maximum likelihood estimate of the constant probability of success is $Y/n$, where $Y$ is the number of successes that has been observed and $n$ is the total number of observations. Hence, we have $$\log L(RM) = [y\log(y) + (n-y)\log(n-y) - n\log(n)]$$
+
+Hence, the likelihood ratio statistic for testing significance of regression is $$LR = 2(\sum_{i=1}^{n} y_i\log(\hat{\pi}) + \sum_{i=1}^{n}(n_i - y_i)\log(1 - \hat{\pi_i})) - 2(y\log(y) + (n-y)\log(n-y) -n\log(n)$$ We reject the null hypothesis that the regression is non-significant if $LR$ is large.
+
+## Test for Goodness of Fit
+
+We want to first make sure that a logistic regression model is a good fit for the data before we accept it. This is analogous to the usual lack of fit testing regression context. In that context, we required repeat observations as we do here. We would like to test $$H_0: E[\boldsymbol{Y}] = (1 + e^{-\boldsymbol{X^T\beta}})^{-1}$$ $$H_1: E[\boldsymbol{Y}] \neq (1 + e^{-\boldsymbol{X^T\beta}})^{-1}$$
+
+Here, we will make use of a Pearson Chi-square goodness of fit test. The expected number of successes is $n_i\hat{\pi_i}$ and the expected number of failures is $n_i(1 - \hat{\pi_i})$. The Pearson Chi-square test statistic is $$\chi^2 = \sum_{i=1}^{n}(\frac{(Y_i - n_i\hat{\pi_i})^2}{n_i\hat{\pi_i}} + \frac{((n_i - Y_i) - n_i(1 - \hat{\pi_i}))^2}{n_i(1 - \hat{\pi_i})})$$
+
+We reject the null hypothesis whenever the test statistic $\chi^2 > \chi^2_{\alpha, n-p}$, where $n$ is the number of groups and $p$ is the number of predictors used.
+
+When there are no replicates on the regressor variables, observations can be grouped to perform a goodness-of-fit test called the Hosmer-Lemeshow test. We group the observation into $g$ groups. Let $O_j$ and $N - O_j$ be the observed number of successes and failures respectively in group $j$, where $N_j$ is the total number of observations in the group. The estimated probability of success $\hat{\pi_j}$ in the j-th group is the average estimated success probability. Then the Hosmer-Lemenshow test statistic is $$HL = \sum_{j=1}^{g} \frac{(O_j - N_j\hat{\pi_j})^2}{N_j\hat{\pi_j}}+\sum_{j=1}^{g}\frac{(N_j - O_j - N_j(1-\pi_j))^2}{N_j(1 - \hat{\pi_j)}} = \sum_{j=1}^{g}\frac{(O_j - N_j\hat{\pi_j})^2}{N_j\hat{\pi_j}(1 - \hat{\pi_j})}$$ The HL statistic follows a chi-squared distribution with $g-1$ degrees of freedom. We reject the null hypothesis for large values of the HL statistic.
+
+Now, we talk about the Deviance Goodness of Fit Test. This test is based on the likelihood ratio test whereby we consider the reduced and full models. Here we compare the current model to a saturated model whereby each observation (or group when $n_i > 1$) has its own probability of success estimated by $Y_i/n_i$.
+
+Under the reduced model, we have $$E[Y_i] = (1 + e^{-\boldsymbol{X^T\beta}})^{-1}$$ whereas under the full model (also called the saturated model) we have $$E[Y_i] = \pi_i$$
+
+The deviance goodness of fit statistic, also called Deviance, is given by 
+
+\begin{equation*}
+  \begin{split}
+    DEV(X_0, X_1, \dots, X_{p-1}) 
+    &= -2[\log L(RM) - \log L(FM)] \\
+    &= -2\sum_{i=1}^{n} [Y_i \log(\frac{Y_i}{n_i\hat{\pi_i}})] - 2\sum_{i=1}^{n}[(n_i - Y_i) \log(\frac{n_i - Y_i}{n_i(1 - \hat{\pi_i})})]
+  \end{split}
+\end{equation*}
+
+We reject the null hypothesis that $E[Y] = (1 + e^{-\boldsymbol{X^T\beta}})^{-1}$ for $DEV > \chi^2_{n-p}$. The deviance in logistic regression plays an analogous role to the residual mean squares in ordinary regression.
+
+## Diagnostic Measures for Logistic Regression
+
+Now, we talk about diagnostic measures for logistic regression. In section 7, we talked about several diagnostic measures for the ordinary linear regression model. However, the diagnostic measures are different for the logistic regression model. 
+
+We shall consider the ungrouped case only. Residuals in that case can be used to diagnose the adequacy of the fitted model. The ordinary residuals are defined as $$e_i = Y_i - n_i\hat{\pi_i}$$
+
+These do not have constant variance. The deviance residual is for $i = 1, ..., n$, $$d_i = \pm(2[Y_i\log(\frac{Y_i}{n_i\hat{\pi_i}}) + (n_i - Y_i)\log(\frac{n_i - Y_i}{n_i(1 - \hat{\pi_i})})])^{1/2}$$ where the sign of $d_i$ is the same as the sign of $e_i$.
+
+Similarly, we may compute the standardized Pearson residuals $$r_{P_i} = \frac{Y_i - n_i\hat{\pi_i}}{\sqrt{n_i(\hat{\pi_i}(1 - \hat{\pi_i}))}}$$ which do not have unit variance
+
+We can also compute the studentized Pearson residuals $$sr_{P_i} = \frac{r_{P_i}}{\sqrt{1 - h_{ii}}}$$ where $h_{ii}$ is the i-th diagonal element of the hat matrix $$\boldsymbol{H = V^{1/2}X(X^TVX)^{-1}X^TV^{1/2}}$$ and $\boldsymbol{V}$ is the diagonal matrix with $V_{ii} = n_i\hat{\pi_i}(1 - \hat{\pi_i})$
+
+A plot of the deviance and the studentized Pearson residuals are useful to check for outliers. A normal probability plot of the deviance residuals can be used to check for the fit of the model and for outliers. A plot of the deviance vs. the estimated probability of success can be used to determine where the model is poorly fitted, at high or low probabilities.
+
+For a good model, $E[Y_i] = \pi_i$ and plots of $sr_{P_i}$ vs. $\hat{\pi_i}$ and $sr_{P_i}$ vs. linear predictor $\boldsymbol{X_i^T\hat{\beta}}$ should show a smooth horizontal Lowess line through 0. Similarly for a plot of $d_i$ vs. $\hat{\pi_i}$ and $d_i$ vs. linear predictor $\boldsymbol{X_i^T\hat{\beta}}$.
+
+In order to flag influential cases, we consider deleting one observation at a time and measuring its effect on both the $\chi^2$ ajd $DEV$ statistics. Plots of these vs. $i$ will show spikes for influential observations. Similarly for plots vs. $\hat{\pi_i}$.
+
+Cook's distance measures the standardized change in the linear predictor $\boldsymbol{X^T\beta}$ when the i-th case is deleted. Indexed plots of Cook's distance identify cases that have a large influence on the fitted predictor. Indexed plots of the leverage values $h_{ii}$ help to identify ourliers in the $X$ space. In all cases, visual assessments are needed because there is no actual rule of thumb for flagging outlier cases.
+
+## Example: Programming Experience Data
+
+We now look at an example that looks at the Programming Experience Dataset. 
+
+We first load the data:
+
+```{r}
+program <- read.table("/System/Volumes/Data/MAT 3375/Summary Sheet/Program experience.txt", header=TRUE, sep = '\t')
+program
+```
+```{r}
+mlogit <- glm(Success~Experience, data=program, family = "binomial")
+summary(mlogit)
+```
+From the summary data above, we find that if we model the success probability against the number of years of programming experience, we find that a logistic regression model is $$\hat{\pi_i} = \frac{exp(-3.05970+0.16149X_i)}{1 + exp(-3.05970 + 0.16149X_i)}$$ where $X_i$ is the number of years of programming experience. We find that if we test $H_0: \beta_1 = 0$ against $H_1: \beta_1 \neq 0$, then we can reject $H_0$ at the 0.05 level. This means that there is a significant relationship between programming experience and success probability.
+
+Now we construct confidence intervals of the model parameters:
+
+```{r}
+confint(mlogit)
+```
+A 95\% confidence interval for $\beta_0$ is $[-6.037, -0.916]$ and a 95\% confidence interval for $\beta_1$ is $[0.050, 0.314]$.
+
+Now, we construct a confidence interval of the odds ratio:
+
+```{r}
+exp(cbind(OR = coef(mlogit), confint(mlogit)))
+```
+Therefore, a 95\% confidence interval for the odds ratio is $[1.052, 1.369]$.
+
+
+# Poisson Regression
+
+In the section above, we talked about Logistic regression, which is used to model binary response variables. Now, we talk about Poisson regression, which is used to model counting data $Y$ such that $Y_i \sim Pois(\mu_i)$ with mean $\mu_i$ and variance $\mu_i$.
+
+The probability mass function of the Poisson distribution is $$f(y) = \frac{\mu^y}{y!}e^{-\mu}$$ for $y = 0, 1, ...$.
+
+The model is then given as $$Y_i = \mu_i + \epsilon_i$$ for $i = 1, ..., n$.
+
+We have $E[Y_i] = \mu_i$ and $Var[Y_i] = \mu_i$ so the variance is not constant.
+
+We assume that there is a link function $g(\mu_i)$ that specifies the mean which may be one of the following:
+
+ $$g(\mu_i) = \mu_i = X_i^T\beta$$
+ $$g(\mu_i) = \ln(\mu_i) = X_i^T\beta$$
+ 
+The first one is the identity link and the second one is the log link.
+
+The log likelihood is given by $$\log L(y, \beta) = \sum_{i = 1}^{n} y_i \log(\mu_i) - \sum_{i=1}^{n} \mu_i - \sum_{i=1}^{n} \log(y!)$$
+
+This equation is used for the estimation of parameters. There is no closed form solutions. Numerical methods are required to find the solution.
+
+The fitted Poisson model is then 
+
+\begin{equation*}
+  \begin{split}
+    \hat{Y_i}
+    &= g^{-1}(X_i^T\beta) \\
+    &= \left \{
+  \begin{array}{ll}
+    X_i^T\hat{\beta}  \quad \text{identity link } \\
+    exp(X_i^T\hat{\beta})  \quad \text{log link } \,
+  \end{array}
+  \right.
+  \end{split}
+\end{equation*}
+
+Inference on the Poisson model is conducted as in the case of the logistic model.
+
+## Example: Aircraft Damage Data
+
+We first load the data:
+
+```{r}
+Aircraft <- read.table("/System/Volumes/Data/MAT 3375/Summary Sheet/Aircraft Damage Data.txt", header=TRUE, sep="\t")
+summary(Aircraft)
+```
+
+```{r}
+mpoisson = glm(Y~X1+X2+X3, data=Aircraft, family = poisson(link="log"))
+summary(mpoisson)
+```
+We find that the fitted Poisson regression model is $Y_i = exp(-0.406 + 0.569X_{i1} + 0.165X_{i2} - 0.013X_{i3})$. We also find that there is a significant relationship between $Y$ and $X_2$, but not between $Y$ and $X_1$ and between $Y$ and $X_3$. We find that the Residual deviance is 25.953, which would result in a p-value between 0.1 and 0.5, which means that the Poisson model is a good fit for the data.
+
+# Generalized Linear Models
+
+Both the Logistic and Poisson models are examples of the generalized linear model (GLM). The generalized linear model involces a linear predictor, a link function, and a distribution for the response variable. The response variable is assumed to have a distribution which is a member of the exponential family of distributions.
+
+$$f(y_i, \theta_i, \phi) = exp(\frac{y_i\theta_i - b(\theta_i)}{a(\phi)} + h(y_i, \phi))$$
+
+Here, we get that $\mu_i = E[Y_i] = \frac{db(\theta_i)}{d\theta_i}$ and $Var[Y_i] = \frac{d^2 b(\theta_i)}{d\theta_i^2} a(\phi)$
+
+The basic idea is to develop a linear model for a function of the mean. Set $\eta_i = g(\mu_i) = \boldsymbol{X_i^T\beta}$. The function $g$ is called the link function. 
+
+For the logistic regression model, we have that the density of the response variable is 
+
+$$f(y_i, \theta_i, \phi) = {n_i \choose \pi_i}\pi_i^{y_i}(1 - \pi_i)^{n_i - y_i} = exp((y_i\log(\frac{\pi_i}{1 - \pi_i}) + n_i\log(1 - \pi_i)) + \log{n_i \choose y_i})$$ where $\theta_i = \log(\frac{\pi_i}{1 - \pi_i})$, $b(\theta_i) = -(n_i\log(1 - \pi_i)) = -n_i\log(1 - \pi_i) = n_i\log(1 + \frac{\pi_i}{1-\pi_i}) = n_i\log(1 + e^{\theta_i})$, $\phi = 1$, $a(\phi) = 1$, and $h(y_i, \theta_i) = \log{n_i \choose y_i}$
+
+The link function is $g(\mu_i) = \log(\frac{\mu_i}{1 - \mu_i})$.
+
+For the Poisson regression model, we have that the density of the response variable is
+
+$$f(y_i, \theta_i, \phi) = \frac{e^{-\lambda_i}\lambda^{y_i}}{y_i!} = exp((y_i\log(\lambda_i) - \lambda_i) - \log(y_i!))$$ where $\theta_i = \log(\lambda_i)$, $b(\theta_i) = \lambda_i = e^{\theta_i}$, $\phi = 1$, $a(\phi) = 1$, and $h(y_i, \theta_i) = \log(y_i!)$
+
+The link function is either the identity link or the log link.
