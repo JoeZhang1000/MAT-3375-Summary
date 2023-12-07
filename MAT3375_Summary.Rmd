@@ -1326,7 +1326,7 @@ par(mfrow=c(2,2))
 plot(fit)
 ```
 
-From looking at the plots above, we have that the qq-plot follows a straight line pattern in the middle, but not so much on the sides. Therefore, there may be a problem with the normality assumption for this particular dataset. From looking at the residuals vs. fitted plot, we see that the points are randomly distributed on the plot. This means that we can assume constancy of variance in the dataset.
+From looking at the plots above, we have that the qq-plot follows a straight line pattern in the middle, but not so much on the sides. Therefore, there may be a problem with the normality assumption for this particular dataset. From looking at the residuals vs. fitted plot, we see that the points follow a slight pattern on the plot. This means that the constancy of variance assumption may not be reasonable.
 
 # Remedial Measures and Transformations
 
@@ -1926,7 +1926,97 @@ Another approach is to use a penalty function $$c \sum_{j=1}^{p-1} |\beta_j|$$ w
 
 ## Example: Body Fat Data Analysis
 
-Consult the example Alvo did in class. He did not upload the Body Fat data to Brightspace.
+We now look at the Body Fat Data. We first load the data into a dataframe:
+
+```{r}
+Tricepts <- c(19.5, 24.7, 30.7, 29.8, 19.1, 25.6, 31.4, 27.9, 22.1, 25.5, 31.1, 30.4, 18.7, 19.7, 14.6, 29.5, 27.7, 30.2, 22.7, 25.2)
+Thigh <- c(43.1, 49.8, 51.9, 54.3, 42.2, 53.9, 58.5, 52.1, 49.9, 53.5, 56.6, 56.7, 46.5, 44.2, 42.7, 54.4, 55.3, 58.6, 48.2, 51.0)
+Midarm <- c(29.1, 28.2, 37.0, 31.1, 30.9, 23.7, 27.6, 30.6, 23.2, 24.8, 30.0, 28.3, 23.0, 28.6, 21.3, 30.1, 25.7, 24.6, 27.1, 27.5)
+Fat <- c(11.9, 22.8, 18.7, 20.1, 12.9, 21.7, 27.1, 25.4, 21.3, 19.3, 25.4, 27.2, 11.7, 17.8, 12.8, 23.9, 22.6, 25.4, 14.8, 21.1)
+
+Bodyfat <- data.frame(Tricepts, Thigh, Midarm, Fat)
+Bodyfat
+```
+
+Now, we construct a scatterplot matrix and a correlation matrix to detect possible multicollinearity problems:
+
+```{r}
+plot(Bodyfat)
+cor(Bodyfat)
+```
+From the scatterplot matrix, we see that there is positive correlation between Fat and Tricepts and between fat and Thigh, but there does not seem to be a strong correlation between Fat and Midarm. We also see that Tricepts and Thigh also appear to be highly positively correlated.
+
+From the correlation matrix, we find that there is strong and positive correlation between Fat and Tricepts and between Fat and Thigh, but a very weak correlation between Fat and Midarm. There is also very strong correlation between Tricepts and Thigh.
+
+The above observations show that there are potential multicollinearity problems in the dataset. 
+
+We fit a multiple linear regression model of Fat vs. Tricepts, Thigh, and Midarm:
+
+```{r}
+model <- lm(Fat ~ Tricepts + Thigh + Midarm, data=Bodyfat)
+summary(model)
+```
+We find that none of the coefficients, including the intercept, are statistically significant. The intercept estimate is also very large and its standard error is also very large. We have the standard error of the other coefficients are also quite large. There seems to be problems with the model.
+
+Some of the problems can be caused by multicollinearity. Now, we look at multicollinearity diagnostics.
+
+```{r, include = FALSE}
+library(olsrr)
+```
+
+```{r}
+ols_coll_diag(model)
+```
+
+We see that the variance inflation factors are all above 100, which is very high and this indicates severe multicollinearity. The overall average condition index is also high, which indicates potential multicollinearity problems. 
+
+Now, we try fitting a ridge regression model:
+
+```{r, include = FALSE}
+library(glmnet)
+```
+
+```{r}
+y <- Bodyfat$Fat
+x <- data.matrix(Bodyfat[, c('Tricepts', 'Thigh', 'Midarm')])
+
+modelR <- glmnet(x, y, alpha = 0)
+
+cv_model <- cv.glmnet(x, y, alpha=0)
+
+plot(cv_model)
+```
+This plot shows that the optimal value to choose for the constant in the penalty term is somewhere betwen 0 and 2. We now compute the actual value of the constant.
+
+```{r}
+best_lambda <- cv_model$lambda.min
+best_lambda
+```
+We find that the best lambda value is 0.4370159. Now, we use this to fit the ridge regression model.
+
+```{r}
+best_model <- glmnet(x, y, alpha = 0, lambda = best_lambda)
+
+coef(best_model)
+```
+We find that the ridge regression model is then $Fat = -0.951 - 0.438 \cdot Tricepts + 0.437 \cdot Thigh - 0.119 \cdot Midarm$.
+
+Now, we find the $R^2$ value of the model:
+
+```{r}
+y_predicted <- predict(modelR, s = best_lambda, newx = x)
+
+sst <- sum((y - mean(y))^2)
+
+sse <- sum((y - y_predicted)^2)
+
+rsq <- 1 - sse/sst
+
+rsq
+```
+
+We obtain an $R^2$ value of 0.7789.
+
 
 # Building the regression model
 
