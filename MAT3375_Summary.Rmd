@@ -2356,7 +2356,7 @@ The deviance goodness of fit statistic, also called Deviance, is given by
   \begin{split}
     DEV(X_0, X_1, \dots, X_{p-1}) 
     &= -2[\log L(RM) - \log L(FM)] \\
-    &= -2\sum_{i=1}^{n} [Y_i \log(\frac{Y_i}{n_i\hat{\pi_i}})] - 2\sum_{i=1}^{n}[(n_i - Y_i) \log(\frac{n_i - Y_i}{n_i(1 - \hat{\pi_i})})]
+    &= 2\sum_{i=1}^{n} [Y_i \log(\frac{Y_i}{n_i\hat{\pi_i}})] + 2\sum_{i=1}^{n}[(n_i - Y_i) \log(\frac{n_i - Y_i}{n_i(1 - \hat{\pi_i})})]
   \end{split}
 \end{equation*}
 
@@ -2401,14 +2401,14 @@ From the summary data above, we find that if we model the success probability ag
 Now we construct confidence intervals of the model parameters:
 
 ```{r}
-confint(mlogit)
+confint.default(mlogit)
 ```
 A 95\% confidence interval for $\beta_0$ is $[-6.037, -0.916]$ and a 95\% confidence interval for $\beta_1$ is $[0.050, 0.314]$.
 
 Now, we construct a confidence interval of the odds ratio:
 
 ```{r}
-exp(cbind(OR = coef(mlogit), confint(mlogit)))
+exp(cbind(OR = coef(mlogit), confint.default(mlogit)))
 ```
 Therefore, a 95\% confidence interval for the odds ratio is $[1.052, 1.369]$.
 
